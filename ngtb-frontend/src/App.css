@@ -3,3 +3,9 @@
   grid-template-columns: 10rem 10rem 10rem;
   grid-gap: 1rem;
 }
+.arrow-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem;
+}
