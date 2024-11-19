@@ -8,7 +8,7 @@ const protocol = 'ws'
 const host = '52.37.79.188'
 const port = '1883'
 const path = '/mqtt'
-const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
+// const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
 
 const connectUrl = `${protocol}://${host}:${port}${path}`
 function App() {
