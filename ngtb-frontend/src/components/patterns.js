@@ -1,9 +1,12 @@
-import React from 'react';
-import mqtt from 'mqtt';
+import React, { useState } from 'react';
 import './styles/patterns.css'; // Make sure to create and style this CSS file
-const mqttClient = mqtt.connect('wss://broker.hivemq.com:8884/mqtt'); 
+import Modal from './Modal'; // Import the Modal component
+import Pride from './pride'; // Import the Pride component
 
-const Pattern = () => {
+const Pattern = (props) => {
+    const {client} = props.mqttClient;
+    const [showModal, setShowModal] = useState(false); // Define the showModal state
+
     const pattern = [
         'COLOR255000000255000000000000255000000255255255000255255000',
         'FRACS255070000255000000255190000',
@@ -32,20 +35,9 @@ const Pattern = () => {
         const colorToSend = pattern;
         var options = { retain: true };
         console.log(colorToSend);
-        mqttClient.publish('GUHemmTree', colorToSend, options);
+        client.publish('GUHemmTree', colorToSend, options);
         console.log('Message sent');
     };
-
-    const buttons = pattern.map((color, index) => (
-        <button 
-            key={index} 
-            className="color-button" 
-            style={{ backgroundColor: color }} 
-            onClick={() => handleClick(color, index)}
-        >
-            
-        </button>
-    ));
     function randomColors() {
         var textToSend="FRACS"
         var numLoops = Math.floor(Math.random() * (5 - 2) + 2);
@@ -77,12 +69,31 @@ const Pattern = () => {
         }
        return textToSend;
     }
+    const buttons = pattern.map((color, index) => (
+        <button
+            key={index} 
+            className="pattern-button"
+            onClick={() => handleClick(color, index)}
+        >
+            Pattern {index + 1}
+        </button>
+    ));
+
     return (
         <div className="static-colors-container">
             <h1>Patterns!</h1>
             <div className="grid-container">
                 {buttons}
+                <button 
+                    className="pattern-button"
+                    onClick={() => setShowModal(true)}
+                >
+                    Launch Pride
+                </button>
             </div>
+            <Modal show={showModal} onClose={() => setShowModal(false)}>
+                <Pride mqttClient={{client: client}}/>
+            </Modal>
         </div>
     );
 };

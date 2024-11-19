@@ -1,9 +1,9 @@
 import React from 'react';
-import mqtt from 'mqtt';
 import './styles/static_colors.css'; // Make sure to create and style this CSS file
-const mqttClient = mqtt.connect('wss://broker.hivemq.com:8884/mqtt'); 
 
-const StaticColors = () => {
+const StaticColors = (props) => {
+    const {client} = props.mqttClient;
+    // const mqttClient = client.mqttClient;
     const colors = [
         '#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', 
         '#4B0082', '#8B00FF', '#FF1493', '#00CED1', '#FFD700',
@@ -18,12 +18,12 @@ const StaticColors = () => {
         const colorToSend = hexToColorFormat(color);
         var options = { retain: true };
         console.log(colorToSend);
-        mqttClient.publish('GUHemmTree', colorToSend, options);
+        client.publish('GUHemmTree', colorToSend, options);
         console.log('Message sent');
     };
 
     const buttons = colors.map((color, index) => (
-        <button 
+        <button
             key={index} 
             className="color-button" 
             style={{ backgroundColor: color }} 
