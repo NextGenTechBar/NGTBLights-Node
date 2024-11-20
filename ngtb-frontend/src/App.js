@@ -1,18 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import Pattern from './components/patterns';
-import StaticColors from './components/static_colors'; // Make sure to create and style this CSS file
-import Animations from './components/animations'; // Import the Animations component
-import './App.css'; // Make sure to create and style this CSS file
+import StaticColors from './components/static_colors';
+import Animations from './components/animations';
+import './App.css';
 import mqtt from 'mqtt';
-const protocol = 'ws'
-const host = '52.37.79.188'
-const port = '1884'
-const path = '/mqtt'
-// const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
+import Cookies from 'js-cookie';
 
-const connectUrl = `${protocol}://${host}:${port}${path}`
+const protocol = 'ws';
+const host = '52.37.79.188';
+const port = '1884';
+const path = '/mqtt';
+
+const getClientId = () => {
+    let clientId = Cookies.get('mqttClientId');
+    if (!clientId) {
+        clientId = `mqtt_${Math.random().toString(16).slice(3)}`;
+        Cookies.set('mqttClientId', clientId, { expires: 365 }); // Expires in 1 year
+    }
+    return clientId;
+};
+
+const connectUrl = `${protocol}://${host}:${port}${path}`;
+
 function App() {
-    const mqttClient = mqtt.connect(connectUrl); 
+    const clientId = getClientId();
+    const mqttClient = mqtt.connect(connectUrl, { clientId });
     const [currentView, setCurrentView] = useState('staticColors');
 
     const views = ['staticColors', 'pattern', 'animations'];
@@ -31,9 +43,9 @@ function App() {
 
     return (
         <div className="app-container">
-            {currentView === 'staticColors' && <StaticColors mqttClient={{client: mqttClient}}/>}
-            {currentView === 'pattern' && <Pattern mqttClient={{client: mqttClient}}/>}
-            {currentView === 'animations' && <Animations mqttClient={{client: mqttClient}}/>}
+            {currentView === 'staticColors' && <StaticColors mqttClient={{ client: mqttClient }} />}
+            {currentView === 'pattern' && <Pattern mqttClient={{ client: mqttClient }} />}
+            {currentView === 'animations' && <Animations mqttClient={{ client: mqttClient }} />}
             <div className="arrow-container">
                 <button className="left-arrow" onClick={handleLeftArrowClick}>&larr;</button>
                 <button className="right-arrow" onClick={handleRightArrowClick}>&rarr;</button>

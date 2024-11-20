@@ -5,7 +5,38 @@
 }
 .arrow-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 1rem;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 600px; /* Adjust as needed */
+  margin-top: 20px;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 90vw;
+    height: 100vh; /* Full viewport height */
+    box-sizing: border-box;
+    padding: 10px;
+    margin: 15px;
+}
+
+.left-arrow, .right-arrow {
+    font-size: 24px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 600px) {
+    .app-container {
+        padding: 5px;
+    }
+
+    .left-arrow, .right-arrow {
+        font-size: 20px;
+        padding: 8px;
+    }
 }
