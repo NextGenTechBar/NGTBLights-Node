@@ -6,7 +6,7 @@ import './App.css'; // Make sure to create and style this CSS file
 import mqtt from 'mqtt';
 const protocol = 'ws'
 const host = '52.37.79.188'
-const port = '1883'
+const port = '1884'
 const path = '/mqtt'
 // const clientId = `mqtt_${Math.random().toString(16).slice(3)}`
 
