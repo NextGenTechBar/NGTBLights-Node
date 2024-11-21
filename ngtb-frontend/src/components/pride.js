@@ -15,7 +15,17 @@ const Pride = (props) => {
         'FRACS058166064168212122255255255130130130001001001058166064168212122255255255130130130001001001058166064168212122255255255130130130001001001',
         'FRACS141076200255255255034109025141076200255255255034109025141076200255255255034109025'
     ];
-
+    const images = [
+        'url(./trans.png)',
+        'url(./pan.png)',
+        'url(./bi.png)',
+        'url(./gay.png)',
+        'url(./lesbian.png)',
+        'url(./ace.png)',
+        'url(./nonbinary.png)',
+        'url(./aro.png)',
+        'url(./Pride.png)'
+    ];
     const handleClick = (pride, index) => {
         console.log(`Button ${index + 1} with color ${pride} clicked`);
         // Implement your custom logic here
@@ -30,7 +40,8 @@ const Pride = (props) => {
         <button
             key={index} 
             className="pride-button" 
-            style={{ backgroundColor: color }} 
+            style={{ backgroundImage: images[index] }}
+
             onClick={() => handleClick(color, index)}
         >
             

@@ -4,7 +4,7 @@ import Modal from './Modal'; // Import the Modal component
 import Pride from './pride'; // Import the Pride component
 
 const Pattern = (props) => {
-    const {client} = props.mqttClient;
+    const { client } = props.mqttClient;
     const [showModal, setShowModal] = useState(false); // Define the showModal state
 
     const pattern = [
@@ -26,10 +26,29 @@ const Pattern = (props) => {
         'randomColors'
     ];
 
+    const images = [
+        'url(./Philipines.webp)',
+        'url(./PCLD.jpg)',
+        'url(./xmas.png)',
+        'url(./Hanukkah.jpg)',
+        'url(./GoZags.webp)',
+        'url(./candycane.jpg)',
+        'url(./dots.jpg)',
+        'url(./random.jpg)',
+        'url(./kwanzaajpg)',
+        'url(./rainbow.jpg)',
+        'url(./halloween.jpg)',
+        'url(./USA.jpg)',
+        'url(./joker.jpg)',
+        'url(./grinch.jpg)',
+        'url(./camo.jpg)',
+        'url(./random.jpg)'
+    ];
+
     const handleClick = (pattern, index) => {
         console.log(`Button ${index + 1} with color ${pattern} clicked`);
-        if(pattern==="randomColors"){
-            pattern=randomColors();
+        if (pattern === "randomColors") {
+            pattern = randomColors();
         }
         // Implement your custom logic here
         const colorToSend = pattern;
@@ -38,62 +57,59 @@ const Pattern = (props) => {
         client.publish('GUHemmTree', colorToSend, options);
         console.log('Message sent');
     };
+
     function randomColors() {
-        var textToSend="FRACS"
+        var textToSend = "FRACS"
         var numLoops = Math.floor(Math.random() * (5 - 2) + 2);
-        for (let i = 0; i<numLoops; i++) { //number of colors
-            for(let j=0;j<3;j++){ //do RGB for each
+        for (let i = 0; i < numLoops; i++) { //number of colors
+            for (let j = 0; j < 3; j++) { //do RGB for each
                 //complicated rand formula to ensure distinct colors (not just pastel)
                 var randVal;
-                if(Math.random()>0.75){ //25% of the time, be in this range
-                    randVal=Math.floor(Math.random() * (220 - 30) + 30);
-                }else{ //75% of the time choose a more defined color component
-                    if(Math.random()>0.5){
-                        randVal=Math.floor(Math.random() * (30 - 0) + 0);
-                    }else{
-                        randVal=Math.floor(Math.random() * (255 - 220) + 220);
+                if (Math.random() > 0.75) { //25% of the time, be in this range
+                    randVal = Math.floor(Math.random() * (220 - 30) + 30);
+                } else { //75% of the time choose a more defined color component
+                    if (Math.random() > 0.5) {
+                        randVal = Math.floor(Math.random() * (30 - 0) + 0);
+                    } else {
+                        randVal = Math.floor(Math.random() * (255 - 220) + 220);
                     }
                 }
-                
+
                 var textRandVal;
                 //left padding with 0s
-                if(randVal<10){
-                    textRandVal="00"+randVal;
-                }else if(randVal<100){
-                    textRandVal="0"+randVal;
-                }else{
-                    textRandVal=randVal;
-                }
-                textToSend+=textRandVal;
+                textRandVal = randVal.toString().padStart(3, '0');
+                textToSend += textRandVal;
             }
         }
-       return textToSend;
+        return textToSend;
     }
-    const buttons = pattern.map((color, index) => (
-        <button
-            key={index} 
-            className="pattern-button"
-            onClick={() => handleClick(color, index)}
-        >
-            Pattern {index + 1}
-        </button>
-    ));
 
     return (
         <div className="static-colors-container">
-            <h1>Patterns!</h1>
+            <h2>Patterns!</h2>
             <div className="grid-container">
-                {buttons}
-                <button 
-                    className="pattern-button"
-                    onClick={() => setShowModal(true)}
-                >
-                    Launch Pride
-                </button>
+                {pattern.map((pattern, index) => (
+                    <button
+                        key={index}
+                        className="pattern-button"
+                        style={{ backgroundImage: images[index] }}
+                        onClick={() => handleClick(pattern, index)}
+                    >
+                        Pattern {index + 1}
+                    </button>
+                ))}
+                    <button 
+                        className="pattern-button"
+                        style={{ backgroundImage:' url(./Pride.png)'}}
+                        onClick={() => setShowModal(true)}
+                    >
+                        Launch Pride
+                    </button>
+                <Modal show={showModal} onClose={() => setShowModal(false)}>
+                    <Pride mqttClient={{client: client}}/>
+                </Modal>
+
             </div>
-            <Modal show={showModal} onClose={() => setShowModal(false)}>
-                <Pride mqttClient={{client: client}}/>
-            </Modal>
         </div>
     );
 };
