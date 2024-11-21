@@ -14,6 +14,16 @@ const Animations = (props) => {
         'DYNAMpulses'
     ];
 
+    const images = [
+        'url(./rainbow.gif)',
+        'url(./colorchase.webp)',
+        'url(./homer.gif)',
+        'url(./colorwipe.webp)',
+        'url(./multicolorwipe.jpg)',
+        'url(./twinkle.gif)',
+        'url(./pulse.gif)'
+    ];
+
     const handleClick = (animations, index) => {
         console.log(`Button ${index + 1} with color ${animations} clicked`);
 
@@ -29,7 +39,7 @@ const Animations = (props) => {
         <button class='animation-button'
             key={index} 
             className="animation-button" 
-            style={{ backgroundColor: color }} 
+            style={{ backgroundImage: images[index] }}
             onClick={() => handleClick(color, index)}
         >
             

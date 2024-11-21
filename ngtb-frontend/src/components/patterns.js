@@ -35,7 +35,7 @@ const Pattern = (props) => {
         'url(./candycane.jpg)',
         'url(./dots.jpg)',
         'url(./random.jpg)',
-        'url(./kwanzaajpg)',
+        'url(./kwanzaa.jpg)',
         'url(./rainbow.jpg)',
         'url(./halloween.jpg)',
         'url(./USA.jpg)',
@@ -95,7 +95,7 @@ const Pattern = (props) => {
                         style={{ backgroundImage: images[index] }}
                         onClick={() => handleClick(pattern, index)}
                     >
-                        Pattern {index + 1}
+                        {/* Pattern {index + 1} */}
                     </button>
                 ))}
                     <button 
