@@ -10,21 +10,28 @@ const protocol = 'ws';
 const host = '52.37.79.188';
 const port = '1884';
 const path = '/mqtt';
-
+const connectUrl = `${protocol}://${host}:${port}${path}`;
+var connected = false;
+var mqttClient = null;
 const getClientId = () => {
     let clientId = Cookies.get('mqttClientId');
     if (!clientId) {
-        clientId = `mqtt_${Math.random().toString(16).slice(3)}`;
+        clientId = `mqtt_${Math.random  ().toString(16).slice(3)}`;
         Cookies.set('mqttClientId', clientId, { expires: 365 }); // Expires in 1 year
     }
     return clientId;
 };
-
-const connectUrl = `${protocol}://${host}:${port}${path}`;
+function onConnect() {
+    const clientId = getClientId();
+    if(!connected){
+        console.log('Connected');
+        mqttClient = mqtt.connect(connectUrl, { clientId })
+        connected = true;
+    }
+}
 
 function App() {
-    const clientId = getClientId();
-    const mqttClient = mqtt.connect(connectUrl, { clientId });
+    onConnect();
     const [currentView, setCurrentView] = useState('staticColors');
 
     const views = ['staticColors', 'pattern', 'animations'];
