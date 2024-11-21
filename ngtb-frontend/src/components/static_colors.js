@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles/static_colors.css'; // Make sure to create and style this CSS file
+import './styles/static_colors.scss'; // Make sure to create and style this CSS file
 
 const StaticColors = (props) => {
     const {client} = props.mqttClient;

@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles/animations.css'; // Make sure to create and style this CSS file
+import './styles/animations.scss'; // Make sure to create and style this CSS file
 
 const Animations = (props) => {
     const {client} = props.mqttClient;

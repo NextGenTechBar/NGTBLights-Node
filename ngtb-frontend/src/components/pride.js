@@ -1,5 +1,5 @@
 import React from 'react';
-import './styles/patterns.css'; // Make sure to create and style this CSS file
+import './styles/patterns.scss'; // Make sure to create and style this CSS file
 
 const Pride = (props) => {
     const {client} = props.mqttClient;

@@ -2,7 +2,7 @@ import React, { useState} from 'react';
 import Pattern from './components/patterns';
 import StaticColors from './components/static_colors';
 import Animations from './components/animations';
-import './App.css';
+import './App.scss';
 import mqtt from 'mqtt';
 import Cookies from 'js-cookie';
 
