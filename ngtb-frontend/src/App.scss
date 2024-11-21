@@ -1,9 +1,8 @@
-
 /* SCSS HEX */
-$cardinal: #b12a3bff;
+$C: #b12a3bff;
 $delft-blue: #132f5fff;
 $white: #ffffffff;
-$cambridge-blue: #6c9a8bff;
+$grey: #c1c6c8;
 $atomic-tangerine: #f68e5fff;
 
 /* SCSS HSL */
@@ -40,13 +39,6 @@ body {
   grid-template-columns: 10rem 10rem 10rem;
   grid-gap: 1rem;
 }
-.arrow-container {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 600px; /* Adjust as needed */
-  margin-top: 20px;
-}
 
 .app-container {
     display: flex;
@@ -60,9 +52,22 @@ body {
     margin: 15px;
 }
 
+.arrow-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 600px; /* Adjust as needed */
+    padding: 0 20px;
+}
+
 .left-arrow, .right-arrow {
     font-size: 24px;
     padding: 10px;
+    background-color: $cardinal;
     cursor: pointer;
 }
 
@@ -70,6 +75,7 @@ body {
 @media (max-width: 600px) {
     .app-container {
         padding: 5px;
+        max-height: 80vh;
     }
 
     .left-arrow, .right-arrow {
