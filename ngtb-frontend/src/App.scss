@@ -1,0 +1,79 @@
+
+/* SCSS HEX */
+$cardinal: #b12a3bff;
+$delft-blue: #132f5fff;
+$white: #ffffffff;
+$cambridge-blue: #6c9a8bff;
+$atomic-tangerine: #f68e5fff;
+
+/* SCSS HSL */
+$cardinal: hsla(352, 62%, 43%, 1);
+$delft-blue: hsla(218, 67%, 22%, 1);
+$white: hsla(0, 0%, 100%, 1);
+$cambridge-blue: hsla(160, 19%, 51%, 1);
+$atomic-tangerine: hsla(19, 89%, 67%, 1);
+
+/* SCSS RGB */
+$cardinal: rgba(177, 42, 59, 1);
+$delft-blue: rgba(19, 47, 95, 1);
+$white: rgba(255, 255, 255, 1);
+$cambridge-blue: rgba(108, 154, 139, 1);
+$atomic-tangerine: rgba(246, 142, 95, 1);
+
+/* SCSS Gradient */
+$gradient-top: linear-gradient(0deg, #b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f68e5fff);
+$gradient-right: linear-gradient(90deg, #b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f68e5fff);
+$gradient-bottom: linear-gradient(180deg, #b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f68e5fff);
+$gradient-left: linear-gradient(270deg, #b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f68e5fff);
+$gradient-top-right: linear-gradient(45deg, #b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f68e5fff);
+$gradient-bottom-right: linear-gradient(135deg, #b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f68e5fff);
+$gradient-top-left: linear-gradient(225deg, #b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f68e5fff);
+$gradient-bottom-left: linear-gradient(315deg, #b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f68e5fff);
+$gradient-radial: radial-gradient(#b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f68e5fff);
+
+body {
+    background: $delft-blue;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 10rem 10rem 10rem;
+  grid-gap: 1rem;
+}
+.arrow-container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 600px; /* Adjust as needed */
+  margin-top: 20px;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 90vw;
+    max-height: 40vh; /* Full viewport height */
+    box-sizing: border-box;
+    padding: 10px;
+    margin: 15px;
+}
+
+.left-arrow, .right-arrow {
+    font-size: 24px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 600px) {
+    .app-container {
+        padding: 5px;
+    }
+
+    .left-arrow, .right-arrow {
+        font-size: 20px;
+        padding: 8px;
+    }
+}

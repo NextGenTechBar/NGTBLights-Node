@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './styles/patterns.css'; // Make sure to create and style this CSS file
+import './styles/patterns.scss'; // Make sure to create and style this CSS file
 import Modal from './Modal'; // Import the Modal component
 import Pride from './pride'; // Import the Pride component
 
