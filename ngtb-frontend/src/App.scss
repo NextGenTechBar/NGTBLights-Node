@@ -70,6 +70,9 @@ body {
     background-color: $cardinal;
     cursor: pointer;
 }
+button.close-button {
+    color: $white;
+}
 
 /* Media queries for responsiveness */
 @media (max-width: 600px) {

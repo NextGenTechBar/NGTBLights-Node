@@ -15,11 +15,12 @@
 
 .modal {
     position: relative;
-    background: $white;
+    // background: $white;
     padding: 20px;
     border-radius: 8px;
-    max-width: 500px;
-    width: 90%; /* Adjust width for mobile */
+    max-width: 400px;
+    // max-height: 60%;
+    width: 80%; /* Adjust width for mobile */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin: 20px; /* Add margin for spacing on smaller screens */
 }
