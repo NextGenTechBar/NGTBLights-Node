@@ -11,7 +11,13 @@ body {
 h1 {
     color: $white;
 }
-
+.animation-label {
+    margin-top: 5px;
+    color: black;
+    font-size: 14px;
+    margin: 1px;
+    text-align: center;
+}
 button {
     display: inline-block;
     width: 20vw;

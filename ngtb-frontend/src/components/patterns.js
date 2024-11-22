@@ -44,6 +44,24 @@ const Pattern = (props) => {
         'url(./camo.jpg)',
         'url(./random.jpg)'
     ];
+    const labels = [
+        'FASU',
+        'PCLD',
+        'Christmas',
+        'Hanukkah',
+        'Go Zags',
+        'Candy Cane',
+        'Individual',
+        'Random',
+        'Kwanzaa',
+        'Rainbow',
+        'Halloween',
+        'USA',
+        'Joker',
+        'Grinch',
+        'Camoflauge',
+        'Segments'
+    ];
 
     const handleClick = (pattern, index) => {
         console.log(`Button ${index + 1} with color ${pattern} clicked`);
@@ -89,26 +107,30 @@ const Pattern = (props) => {
             <h2>Patterns!</h2>
             <div className="grid-container">
                 {pattern.map((pattern, index) => (
-                    <button
-                        key={index}
-                        className="pattern-button"
-                        style={{ backgroundImage: images[index] }}
-                        onClick={() => handleClick(pattern, index)}
-                    >
-                        {/* Pattern {index + 1} */}
-                    </button>
+                    <div key={index} className="pattern-button-container">
+                        <button
+                            className="pattern-button"
+                            style={{ backgroundImage: images[index] }}
+                            onClick={() => handleClick(pattern, index)}
+                        >
+                            {/* Pattern {index + 1} */}
+                        </button>
+                        <div className="pattern-label">{labels[index]}</div>
+                    </div>
                 ))}
+                <div className="pattern-button-container">
                     <button 
                         className="pattern-button"
                         style={{ backgroundImage:' url(./Pride.png)'}}
                         onClick={() => setShowModal(true)}
                     >
-                        Launch Pride
+                        {/* Launch Pride */}
                     </button>
+                    <div className="pattern-label">Launch Pride</div>
+                </div>
                 <Modal show={showModal} onClose={() => setShowModal(false)}>
                     <Pride mqttClient={{client: client}}/>
                 </Modal>
-
             </div>
         </div>
     );

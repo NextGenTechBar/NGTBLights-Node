@@ -11,7 +11,8 @@ const Animations = (props) => {
         'DYNAMcolorwipe',
         'DYNAMmulticolorwipe',
         'DYNAMtwinkle',
-        'DYNAMpulses'
+        'DYNAMpulses',
+        'DYNAMtwinkleMod'
     ];
 
     const images = [
@@ -21,9 +22,19 @@ const Animations = (props) => {
         'url(./colorwipe.webp)',
         'url(./multicolorwipe.jpg)',
         'url(./twinkle.gif)',
-        'url(./pulse.gif)'
+        'url(./pulse.gif)',
+        'url(./twinklemod.gif)'
     ];
-
+    const labels = [
+        'Rainbow Zoom', 
+        'Color Chase',
+        'Fade',
+        'Color Wipe',
+        'Multi-Color Wipe',
+        'Sparkle',
+        'Pulse',
+        'Shimmer'
+    ];
     const handleClick = (animations, index) => {
         console.log(`Button ${index + 1} with color ${animations} clicked`);
 
@@ -36,14 +47,18 @@ const Animations = (props) => {
     };
 
     const buttons = animations.map((color, index) => (
-        <button class='animation-button'
-            key={index} 
-            className="animation-button" 
-            style={{ backgroundImage: images[index] }}
-            onClick={() => handleClick(color, index)}
-        >
-            
-        </button>
+        <div key={index} className="animation-button-container">
+            <button class='animation-button'
+                key={index} 
+                className="animation-button" 
+                style={{ backgroundImage: images[index] }}
+                onClick={() => handleClick(color, index)}
+            >
+                
+            </button>
+            <div className="animation-label">{labels[index]}</div>
+        </div>
+
     ));
     
     return (
