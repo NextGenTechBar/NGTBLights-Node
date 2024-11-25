@@ -73,6 +73,8 @@ const Pattern = (props) => {
         var options = { retain: true };
         console.log(colorToSend);
         client.publish('GUHemmTree', colorToSend, options);
+        client.publish('GUHemmTreeStats', colorToSend+"," + props.User.user);
+
         console.log('Message sent');
     };
 

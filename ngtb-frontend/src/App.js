@@ -28,10 +28,12 @@ function onConnect() {
         mqttClient = mqtt.connect(connectUrl, (clientId + Math.random  ().toString(16).slice(3)))
         connected = true;
     }
+    
 }
 
 function App() {
     onConnect();
+    // console.log(clientId);
     const [currentView, setCurrentView] = useState('staticColors');
 
     const views = ['staticColors', 'pattern', 'animations'];
@@ -50,9 +52,9 @@ function App() {
 
     return (
         <div className="app-container">
-            {currentView === 'staticColors' && <StaticColors mqttClient={{ client: mqttClient }} />}
-            {currentView === 'pattern' && <Pattern mqttClient={{ client: mqttClient }} />}
-            {currentView === 'animations' && <Animations mqttClient={{ client: mqttClient }} />}
+            {currentView === 'staticColors' && <StaticColors MqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}} />}
+            {currentView === 'pattern' && <Pattern mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
+            {currentView === 'animations' && <Animations mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
             <div className="arrow-container">
                 <button className="left-arrow" onClick={handleLeftArrowClick}>&larr;</button>
                 <button className="right-arrow" onClick={handleRightArrowClick}>&rarr;</button>

@@ -2,7 +2,7 @@ import React from 'react';
 import './styles/static_colors.scss'; // Make sure to create and style this CSS file
 
 const StaticColors = (props) => {
-    const {client} = props.mqttClient;
+    const {client} = props.MqttClient;
     // const mqttClient = client.mqttClient;
     const colors = [
         '#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', 
@@ -19,6 +19,8 @@ const StaticColors = (props) => {
         var options = { retain: true };
         console.log(colorToSend);
         client.publish('GUHemmTree', colorToSend, options);
+        client.publish('GUHemmTreeStats', colorToSend+"," + props.User.user);
+        console.log(props.User.user);
         console.log('Message sent');
     };
 
