@@ -33,7 +33,16 @@ $gradient-radial: radial-gradient(#b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f
 body {
     background: $delft-blue;
 }
-
+.logo-img{
+    width: 100px;
+    height: 100px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: $white;
+    padding: 10px;
+    border-radius: 30px;
+}
 .container {
   display: grid;
   grid-template-columns: 10rem 10rem 10rem;

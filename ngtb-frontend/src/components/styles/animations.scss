@@ -47,8 +47,6 @@ button:active {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(5, auto);
-    grid-gap: 10px;
-    padding: 10px;
     border-radius: 4px;
     background-color: $grey;
 }

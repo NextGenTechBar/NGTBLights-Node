@@ -43,7 +43,6 @@ button:active {
     // grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Adjust columns to fit available space */
     
     gap: 5px;
-    width: 100%;
     border-radius: 4px;
     background-color: $grey;
     max-height: calc(100vh - 100px); /* Adjust to leave space for arrows */

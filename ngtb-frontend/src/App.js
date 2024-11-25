@@ -7,17 +7,18 @@ import mqtt from 'mqtt';
 import Cookies from 'js-cookie';
 
 const protocol = 'wss';
-const host = '52.37.79.188';
+const host = 'ngtblights.gonzaga.edu';
 const port = '1884';
 const path = '/mqtt';
 const connectUrl = `${protocol}://${host}:${port}${path}`;
 var connected = false;
 var mqttClient = null;
+
 const getClientId = () => {
     let clientId = Cookies.get('mqttClientId');
     if (!clientId) {
-        clientId = `mqtt_web_user_${Math.random  ().toString(16).slice(3)}`;
         Cookies.set('mqttClientId', clientId, { expires: 365 }); // Expires in 1 year
+        clientId = `mqtt_web_user_${Math.random  ().toString(16).slice(3)}`;
     }
     return clientId;
 };
@@ -51,13 +52,16 @@ function App() {
     };
 
     return (
-        <div className="app-container">
-            {currentView === 'staticColors' && <StaticColors MqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}} />}
-            {currentView === 'pattern' && <Pattern mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
-            {currentView === 'animations' && <Animations mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
-            <div className="arrow-container">
-                <button className="left-arrow" onClick={handleLeftArrowClick}>&larr;</button>
-                <button className="right-arrow" onClick={handleRightArrowClick}>&rarr;</button>
+        <div>
+            {/* <img src='NGTB.png' className='logo-img'></img> */}
+            <div className="app-container">
+                {currentView === 'staticColors' && <StaticColors MqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}} />}
+                {currentView === 'pattern' && <Pattern mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
+                {currentView === 'animations' && <Animations mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
+                <div className="arrow-container">
+                    <button className="left-arrow" onClick={handleLeftArrowClick}>&larr;</button>
+                    <button className="right-arrow" onClick={handleRightArrowClick}>&rarr;</button>
+                </div>
             </div>
         </div>
     );
