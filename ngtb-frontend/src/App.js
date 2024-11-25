@@ -6,7 +6,7 @@ import './App.scss';
 import mqtt from 'mqtt';
 import Cookies from 'js-cookie';
 
-const protocol = 'ws';
+const protocol = 'wss';
 const host = '52.37.79.188';
 const port = '1884';
 const path = '/mqtt';
