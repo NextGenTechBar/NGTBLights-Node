@@ -13,7 +13,9 @@ console.log('Starting');
 app.use(cors()); // enable CORS for all routes
 
 app.use(express.static(path.join(__dirname, '../ngtb-frontend/build')));
-
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../ngtb-frontend/build', 'index.html'));
+  });
 //app.use((req, res) => {
 //    res.status(200).send('Hello, world!');
 //});
