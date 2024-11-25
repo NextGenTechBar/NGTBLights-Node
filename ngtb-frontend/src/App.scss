@@ -32,16 +32,22 @@ $gradient-radial: radial-gradient(#b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f
 
 body {
     background: $delft-blue;
+    align-items: flex-start;
+    padding-top: 50px;
+}
+.logo-container{
+    width: 50%;
+    background-color: $white;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    
 }
 .logo-img{
     width: 100px;
     height: 100px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: $white;
+    align-self: center;
     padding: 10px;
-    border-radius: 30px;
 }
 .container {
   display: grid;

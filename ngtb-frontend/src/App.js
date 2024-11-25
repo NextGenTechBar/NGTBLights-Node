@@ -53,7 +53,9 @@ function App() {
 
     return (
         <div>
-            {/* <img src='NGTB.png' className='logo-img'></img> */}
+            {/* <div className='logo-container'>   
+                <img src='NGTB.png' className='logo-img'></img>
+            </div> */}
             <div className="app-container">
                 {currentView === 'staticColors' && <StaticColors MqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}} />}
                 {currentView === 'pattern' && <Pattern mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
