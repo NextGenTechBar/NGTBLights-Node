@@ -10,9 +10,9 @@ const fs = require('fs');
 const PORT = 443; 
 
 console.log('Starting');
-app.use(cors()); // enable CORS for all routes
+// app.use(cors()); // enable CORS for all routes
 
-app.use(express.static(path.join(__dirname, '../ngtb-frontend/build')));
+// app.use(express.static(path.join(__dirname, '../ngtb-frontend/build')));
 
 //app.use((req, res) => {
 //    res.status(200).send('Hello, world!');
@@ -25,7 +25,9 @@ const certificate = fs.readFileSync('certs/ngtblights.gonzaga.edu.chain.crt');
 const httpsServer = https.createServer({
   key: privateKey,
   cert: certificate
-}, app);
+});
+httpsServer.use(cors());
+httpsServer.use(express.static(path.join(__dirname, '../ngtb-frontend/build')));
 
 // Start the server
 //app.listen(PORT, () => {
