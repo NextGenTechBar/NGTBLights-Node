@@ -51,7 +51,7 @@ const Custom = (props) => {
 
     return (
         <div className="static-colors-container">
-            <h2>Patterns!</h2>
+            <h2>Secret Commands!</h2>
             <div className="grid-container">
                 <form onSubmit={(event) => handleClick(event, document.getElementById('custom').value)}>
                     <input type="text" id="custom" name="Custom" placeholder="Enter a secret code!" />
