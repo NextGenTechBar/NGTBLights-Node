@@ -40,7 +40,6 @@ const Custom = (props) => {
                 document.getElementById('custom').value = '';
 
                 document.getElementById('custom').placeholder = 'Invalid code';
-                return;
         }
 
         var options = { retain: true };
