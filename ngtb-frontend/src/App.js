@@ -1,4 +1,4 @@
-import React, { useState} from 'react';
+import React, { useEffect,useState} from 'react';
 import Pattern from './components/patterns';
 import StaticColors from './components/static_colors';
 import Animations from './components/animations';
@@ -38,7 +38,23 @@ function App() {
     const [currentView, setCurrentView] = useState('staticColors');
 
     const views = ['staticColors', 'pattern', 'animations'];
+    const [browser, setBrowser] = useState('');
 
+    useEffect(() => {
+      const userAgent = navigator.userAgent;
+  
+      if (userAgent.indexOf('Chrome') > -1) {
+        setBrowser('Chrome');
+      } else if (userAgent.indexOf('Firefox') > -1) {
+        setBrowser('Firefox');
+      } else if (userAgent.indexOf('Safari') > -1) {
+        setBrowser('Safari');
+      } else if (userAgent.indexOf('Edge') > -1) {
+        setBrowser('Edge');
+      } else {
+        setBrowser('Other');
+      }
+    }, []);
     const handleLeftArrowClick = () => {
         const currentIndex = views.indexOf(currentView);
         const newIndex = (currentIndex - 1 + views.length) % views.length;
@@ -50,22 +66,35 @@ function App() {
         const newIndex = (currentIndex + 1) % views.length;
         setCurrentView(views[newIndex]);
     };
-
-    return (
-        <div>
-            {/* <div className='logo-container'>   
-                <img src='NGTB.png' className='logo-img'></img>
-            </div> */}
-            <div className="app-container">
-                {currentView === 'staticColors' && <StaticColors MqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}} />}
-                {currentView === 'pattern' && <Pattern mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
-                {currentView === 'animations' && <Animations mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
-                <div className="arrow-container">
-                    <button className="left-arrow" onClick={handleLeftArrowClick}>&larr;</button>
-                    <button className="right-arrow" onClick={handleRightArrowClick}>&rarr;</button>
-                </div>
+    function checkBrowser(){
+        console.log(browser);
+        if(browser === 'Firefox'){
+            return(
+            <div>
+                <h1>Sorry, this application is not supported on Firefox. Please use Chrome or Safari.</h1>
             </div>
-        </div>
+            );
+        }
+        else{   
+            return(
+                <div>
+                    <div className="app-container">
+                        {currentView === 'staticColors' && <StaticColors MqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}} />}
+                        {currentView === 'pattern' && <Pattern mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
+                        {currentView === 'animations' && <Animations mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
+                        <div className="arrow-container">
+                            <button className="left-arrow" onClick={handleLeftArrowClick}>&larr;</button>
+                            <button className="right-arrow" onClick={handleRightArrowClick}>&rarr;</button>
+                        </div>
+                    </div>
+                </div>
+            );
+            
+        }
+
+    }
+    return (
+        checkBrowser()
     );
 }
 
