@@ -35,6 +35,8 @@ const Custom = (props) => {
                 colorToSend = 'COLOR000000000000000000000000000000000000000000000255255255255255255255255255255255255255255255';
                 break;
             default:
+                colorToSend = 'invalid';
+
                 document.getElementById('custom').value = '';
 
                 document.getElementById('custom').placeholder = 'Invalid code';
