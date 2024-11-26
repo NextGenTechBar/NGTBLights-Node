@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import './styles/patterns.scss'; // Make sure to create and style this CSS file
+import React from 'react';
+// import './styles/patterns.scss'; // Make sure to create and style this CSS file
+import '../App.scss';
 
 const Custom = (props) => {
     const { client } = props.mqttClient;
@@ -8,33 +9,35 @@ const Custom = (props) => {
         event.preventDefault(); // Prevent the form from submitting and reloading the page
 
         var colorToSend = '';
-        switch (mode) {
-            case 'Thayne':
+        switch (mode.toLowerCase()) {
+            case 'thayne':
                 colorToSend = 'SHORTthayne';
                 break;
-            case 'Bluey':
+            case 'tluey':
                 colorToSend = 'SHORTbluey';
                 break;
-            case 'Jordan':
+            case 'tordan':
                 colorToSend = 'SHORTjordan';
                 break;
-            case 'Emma':
+            case 'emma':
                 colorToSend = 'SHORTemma';
                 break;
-            case 'Emmag':
+            case 'emmag':
                 colorToSend = 'OTHERemmag';
                 break;
-            case 'Fred':
+            case 'fred':
                 colorToSend = 'OTHERfred';
                 break;
-            case 'Bea':
+            case 'bea':
                 colorToSend = 'COLOR255000000000000255255255000';
                 break;
-            case 'Eva':
+            case 'eva':
                 colorToSend = 'COLOR000000000000000000000000000000000000000000000255255255255255255255255255255255255255255255';
                 break;
             default:
-                document.getElementById('custom').value = 'Invalid code';
+                document.getElementById('custom').value = '';
+
+                document.getElementById('custom').placeholder = 'Invalid code';
                 return;
         }
 

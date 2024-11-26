@@ -1,5 +1,6 @@
 import React from 'react';
-import './styles/animations.scss'; // Make sure to create and style this CSS file
+// import './styles/animations.scss'; // Make sure to create and style this CSS file
+import '../App.scss';
 
 const Animations = (props) => {
     const {client} = props.mqttClient;
@@ -58,7 +59,7 @@ const Animations = (props) => {
             >
                 
             </button>
-            <div className="animation-label">{labels[index]}</div>
+            <div className="label">{labels[index]}</div>
         </div>
 
     ));

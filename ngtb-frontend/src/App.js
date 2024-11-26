@@ -68,7 +68,7 @@ function App() {
         setCurrentView(views[newIndex]);
     };
     function checkBrowser(){
-        console.log(browser);
+        // console.log(browser);
         if(browser === 'Firefox'){
             return(
             <div>

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import './styles/patterns.scss'; // Make sure to create and style this CSS file
+import '../App.scss';
+
+// import './styles/patterns.scss'; // Make sure to create and style this CSS file
 import Modal from './Modal'; // Import the Modal component
 import Pride from './pride'; // Import the Pride component
 
@@ -117,7 +119,7 @@ const Pattern = (props) => {
                         >
                             {/* Pattern {index + 1} */}
                         </button>
-                        <div className="pattern-label">{labels[index]}</div>
+                        <div className="label">{labels[index]}</div>
                     </div>
                 ))}
                 <div className="pattern-button-container">

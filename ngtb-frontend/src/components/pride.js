@@ -1,5 +1,6 @@
 import React from 'react';
-import './styles/patterns.scss'; // Make sure to create and style this CSS file
+// import './styles/patterns.scss'; // Make sure to create and style this CSS file
+import '../App.scss';
 
 const Pride = (props) => {
     const {client} = props.mqttClient;
@@ -64,7 +65,7 @@ const Pride = (props) => {
             >
                 
             </button>
-            <div className="animation-label">{labels[index]}</div>
+            <div className="label">{labels[index]}</div>
 
         </div>
     ));
