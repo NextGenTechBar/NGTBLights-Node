@@ -2,6 +2,7 @@ import React, { useEffect,useState} from 'react';
 import Pattern from './components/patterns';
 import StaticColors from './components/static_colors';
 import Animations from './components/animations';
+import Custom from './components/custom';
 import './App.scss';
 import mqtt from 'mqtt';
 import Cookies from 'js-cookie';
@@ -37,7 +38,7 @@ function App() {
     // console.log(clientId);
     const [currentView, setCurrentView] = useState('staticColors');
 
-    const views = ['staticColors', 'pattern', 'animations'];
+    const views = ['staticColors', 'pattern', 'animations', 'custom'];
     const [browser, setBrowser] = useState('');
 
     useEffect(() => {
@@ -82,6 +83,8 @@ function App() {
                         {currentView === 'staticColors' && <StaticColors MqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}} />}
                         {currentView === 'pattern' && <Pattern mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
                         {currentView === 'animations' && <Animations mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
+                        {currentView === 'custom' && <Custom mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
+
                         <div className="arrow-container">
                             <button className="left-arrow" onClick={handleLeftArrowClick}>&larr;</button>
                             <button className="right-arrow" onClick={handleRightArrowClick}>&rarr;</button>
