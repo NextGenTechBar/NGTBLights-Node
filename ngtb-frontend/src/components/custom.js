@@ -39,7 +39,7 @@ const Custom = (props) => {
 
                 document.getElementById('custom').value = '';
 
-                document.getElementById('custom').placeholder = 'Invalid code';
+                document.getElementById('custom').placeholder = 'Invalid code. Try again!';
         }
 
         var options = { retain: true };

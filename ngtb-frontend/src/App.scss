@@ -140,9 +140,9 @@ button.close-button {
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Adjust columns to fit available space */
-    gap: 5px;
-    width: 100%;
+    grid-template-columns: repeat(3, minmax(100px, 1fr)); /* Adjust columns to fit available space */
+    // gap: 5px;
+    // width: 100%;
     border-radius: 4px;
     background-color: $grey;
     max-height: calc(100vh - 100px); /* Adjust to leave space for arrows */
@@ -150,7 +150,15 @@ button.close-button {
     overflow-x: hidden; /* Prevent horizontal scrolling */
     box-sizing: border-box;
 }
-
+.grid-container input [type="text"] {
+    border-radius: 4px;
+    background-color: $grey;
+    max-height: calc(100vh - 100px); /* Adjust to leave space for arrows */
+    overflow-y: auto; /* Allow vertical scrolling if needed */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    box-sizing: border-box;
+    display: block;
+}
 .rate-limit-message {
     color: $white;
     font-size: 14px;
