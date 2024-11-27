@@ -75,6 +75,11 @@ button:active {
     transform: scale(0.8);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+.submit-button {
+    background-color: $cardinal;
+    width: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow to submit button */
+}
 
 /* App container styles */
 .app-container {

@@ -56,7 +56,7 @@ const Custom = (props) => {
             <div style={{backgroundColor: '#c1c6c8', borderRadius: '10px'}}>
                 <form onSubmit={(event) => handleClick(event, document.getElementById('custom').value)}>
                     <input type="text" id="custom" name="Custom" placeholder="Enter a secret code!" />
-                    <button type="submit">Submit</button>
+                    <button type="submit" className='submit-button'>Submit</button>
                 </form>
             </div>
         </div>
