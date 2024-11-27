@@ -87,6 +87,7 @@ button:active {
     box-sizing: border-box;
     padding: 10px;
     margin: 15px;
+    padding-bottom: 60px; /* Add padding to prevent overlap with arrow container */
 }
 
 .arrow-container {
@@ -116,7 +117,7 @@ button.close-button {
 @media (max-width: 600px) {
     .app-container {
         padding: 5px;
-        max-height: calc(100vh - 60px); /* Adjust to leave space for arrows */
+        max-height: calc(100vh - 200px); /* Adjust to leave space for arrows */
     }
 
     .left-arrow, .right-arrow {
