@@ -18,17 +18,18 @@ var mqttClient = null;
 const getClientId = () => {
     let clientId = Cookies.get('mqttClientId');
     if (!clientId) {
-        Cookies.set('mqttClientId', clientId, { expires: 365 }); // Expires in 1 year
         clientId = `mqtt_web_user_${Math.random  ().toString(16).slice(3)}`;
+        Cookies.set('mqttClientId', clientId, { expires: 365 }); // Expires in 1 year
     }
     return clientId;
 };
 function onConnect() {
     const clientId = getClientId();
     if(!connected){
-        console.log('Connected');
         mqttClient = mqtt.connect(connectUrl, (clientId + Math.random  ().toString(16).slice(3)))
         connected = true;
+        console.log('Connected');
+        console.log(clientId);
     }
     
 }
