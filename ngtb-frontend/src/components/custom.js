@@ -13,10 +13,10 @@ const Custom = (props) => {
             case 'thayne':
                 colorToSend = 'SHORTthayne';
                 break;
-            case 'tluey':
+            case 'bluey':
                 colorToSend = 'SHORTbluey';
                 break;
-            case 'tordan':
+            case 'jordan':
                 colorToSend = 'SHORTjordan';
                 break;
             case 'emma':
