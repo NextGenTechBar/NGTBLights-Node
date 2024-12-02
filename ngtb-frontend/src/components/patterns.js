@@ -133,7 +133,7 @@ const Pattern = (props) => {
                     <div className="pattern-label">Launch Pride</div>
                 </div>
                 <Modal show={showModal} onClose={() => setShowModal(false)}>
-                    <Pride mqttClient={{client: client}}/>
+                    <Pride mqttClient={{client: client}} User={{ user:props.User.user}}/>
                 </Modal>
             </div>
         </div>
