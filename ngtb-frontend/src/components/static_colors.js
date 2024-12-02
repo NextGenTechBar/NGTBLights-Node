@@ -25,16 +25,33 @@ const StaticColors = (props) => {
         console.log('Message sent');
     };
 
+    var counter = 0;
+
+    function ratelimit(color, index){
+        counter++;
+        if (counter === 3)
+        {
+            alert('3 times in a second! - run a function!');
+            //some code ...
+            counter = 0;
+        } 
+        else{
+            handleClick(color, index);
+        }
+    }
+    setInterval(function() { counter = 0; }, 1000);
+
     const buttons = colors.map((color, index) => (
         <button
             key={index} 
             className="color-button" 
             style={{ backgroundColor: color }} 
-            onClick={() => handleClick(color, index)}
+            onClick={() => ratelimit(color, index)}
         >
             
         </button>
     ));
+
     function hexToColorFormat(hex) {
         // Remove the hash at the start if it's there
         hex = hex.replace(/^#/, '');
