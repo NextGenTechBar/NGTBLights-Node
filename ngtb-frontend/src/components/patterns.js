@@ -80,6 +80,20 @@ const Pattern = (props) => {
         console.log('Message sent');
     };
 
+    var counter = 0;
+    function ratelimit(pattern, index){
+        counter++;
+        if (counter === 3)
+        {
+            alert('Please slow down! Spamming makes it no fun for anyone.');
+            //some code ...
+            counter = 0;
+        } 
+        else{
+            handleClick(pattern, index);
+        }
+    }
+    setInterval(function() { counter = 0; }, 1000);
     function randomColors() {
         var textToSend = "FRACS"
         var numLoops = Math.floor(Math.random() * (5 - 2) + 2);
@@ -115,7 +129,7 @@ const Pattern = (props) => {
                         <button
                             className="pattern-button"
                             style={{ backgroundImage: images[index] }}
-                            onClick={() => handleClick(pattern, index)}
+                            onClick={() => ratelimit(pattern, index)}
                         >
                             {/* Pattern {index + 1} */}
                         </button>

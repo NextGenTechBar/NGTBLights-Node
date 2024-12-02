@@ -49,13 +49,27 @@ const Animations = (props) => {
         console.log('Message sent');
     };
 
-    const buttons = animations.map((color, index) => (
+    var counter = 0;
+    function ratelimit(animations, index){
+        counter++;
+        if (counter === 3)
+        {
+            alert('Please slow down! Spamming makes it no fun for anyone.');
+            //some code ...
+            counter = 0;
+        } 
+        else{
+            handleClick(animations, index);
+        }
+    }
+    setInterval(function() { counter = 0; }, 1000);
+    const buttons = animations.map((animations, index) => (
         <div key={index} className="animation-button-container">
             <button class='animation-button'
                 key={index} 
                 className="animation-button" 
                 style={{ backgroundImage: images[index] }}
-                onClick={() => handleClick(color, index)}
+                onClick={() => ratelimit(animations, index)}
             >
                 
             </button>

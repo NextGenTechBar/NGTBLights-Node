@@ -26,12 +26,11 @@ const StaticColors = (props) => {
     };
 
     var counter = 0;
-
     function ratelimit(color, index){
         counter++;
         if (counter === 3)
         {
-            alert('3 times in a second! - run a function!');
+            alert('Please slow down! Spamming makes it no fun for anyone.');
             //some code ...
             counter = 0;
         } 
@@ -40,7 +39,20 @@ const StaticColors = (props) => {
         }
     }
     setInterval(function() { counter = 0; }, 1000);
-
+    // var counter2 = 0;
+    // function ratelimit(color, index){
+    //     coutner2++;
+    //     if (counter2 == 30)
+    //     {
+    //         alert('Please slow down! Spamming makes it no fun for anyone.');
+    //         //some code ...
+    //         counter = 0;
+    //     } 
+    //     else{
+    //         handleClick(color, index);
+    //     }
+    // }
+    // setInterval(function() { counter = 0; }, 60000);
     const buttons = colors.map((color, index) => (
         <button
             key={index} 

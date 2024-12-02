@@ -50,11 +50,25 @@ const Custom = (props) => {
         console.log('Message sent');
     };
 
+    var counter = 0;
+    function ratelimit(event, mode){
+        counter++;
+        if (counter === 3)
+        {
+            alert('Please slow down! Spamming makes it no fun for anyone.');
+            //some code ...
+            counter = 0;
+        } 
+        else{
+            handleClick(event, mode);
+        }
+    }
+    setInterval(function() { counter = 0; }, 1000);
     return (
         <div className="static-colors-container">
             <h2>Secret Commands!</h2>
             <div style={{backgroundColor: '#c1c6c8', borderRadius: '10px'}}>
-                <form onSubmit={(event) => handleClick(event, document.getElementById('custom').value)}>
+                <form onSubmit={(event) => ratelimit(event, document.getElementById('custom').value)}>
                     <input type="text" id="custom" name="Custom" placeholder="Enter a secret code!" />
                     <button type="submit" className='submit-button'>Submit</button>
                 </form>

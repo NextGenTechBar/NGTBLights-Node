@@ -53,7 +53,21 @@ const Pride = (props) => {
         console.log('Message sent');
     };
 
-    const buttons = pride.map((color, index) => (
+    var counter = 0;
+    function ratelimit(pride, index){
+        counter++;
+        if (counter === 3)
+        {
+            alert('Please slow down! Spamming makes it no fun for anyone.');
+            //some code ...
+            counter = 0;
+        } 
+        else{
+            handleClick(pride, index);
+        }
+    }
+    setInterval(function() { counter = 0; }, 1000);
+    const buttons = pride.map((pride, index) => (
         <div key={index} className="pattern-button-container">
 
             <button
@@ -61,7 +75,7 @@ const Pride = (props) => {
                 className="pride-button" 
                 style={{ backgroundImage: images[index] }}
 
-                onClick={() => handleClick(color, index)}
+                onClick={() => ratelimit(pride, index)}
             >
                 
             </button>
