@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 // import './styles/animations.scss'; // Make sure to create and style this CSS file
 import '../App.scss';
+import ModalAlert from './ModalAlert.js'
 
 const Animations = (props) => {
     const {client} = props.mqttClient;
+    const [showModal, setShowModal] = useState(false);
 
     const animations = [
         'DYNAMrainbow',
@@ -54,7 +56,9 @@ const Animations = (props) => {
         counter++;
         if (counter === 3)
         {
-            alert('Please slow down! Spamming makes it no fun for anyone.');
+            setShowModal(true);
+
+            // alert('Please slow down! Spamming makes it no fun for anyone.');
             //some code ...
             counter = 0;
         } 
@@ -84,6 +88,9 @@ const Animations = (props) => {
             <div className="grid-container">
                 {buttons}
             </div>
+            <ModalAlert show={showModal} onClose={() => setShowModal(false)}>
+                <p>Please slow down! Spamming makes it no fun for anyone.</p>
+            </ModalAlert>
         </div>
     );
 };

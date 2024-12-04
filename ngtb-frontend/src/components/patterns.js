@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../App.scss';
+import ModalAlert from './ModalAlert.js'
 
 // import './styles/patterns.scss'; // Make sure to create and style this CSS file
 import Modal from './Modal'; // Import the Modal component
@@ -8,6 +9,7 @@ import Pride from './pride'; // Import the Pride component
 const Pattern = (props) => {
     const { client } = props.mqttClient;
     const [showModal, setShowModal] = useState(false); // Define the showModal state
+    const [showModalAlert, setShowModalAlert] = useState(false);
 
     const pattern = [
         'COLOR255000000255000000000000255000000255255255000255255000',
@@ -85,7 +87,9 @@ const Pattern = (props) => {
         counter++;
         if (counter === 3)
         {
-            alert('Please slow down! Spamming makes it no fun for anyone.');
+            setShowModalAlert(true);
+
+            // alert('Please slow down! Spamming makes it no fun for anyone.');
             //some code ...
             counter = 0;
         } 
@@ -150,6 +154,9 @@ const Pattern = (props) => {
                     <Pride mqttClient={{client: client}} User={{ user:props.User.user}}/>
                 </Modal>
             </div>
+            <ModalAlert show={showModalAlert} onClose={() => setShowModalAlert(false)}>
+                <p>Please slow down! Spamming makes it no fun for anyone.</p>
+            </ModalAlert>
         </div>
     );
 };

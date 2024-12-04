@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+import ModalAlert from './ModalAlert.js'
 // import './styles/static_colors.scss'; // Make sure to create and style this CSS file
 
 import '../App.scss';
@@ -12,6 +14,8 @@ const StaticColors = (props) => {
         '#1E90FF', '#FF6347', '#40E0D0', '#EE82EE', '#F08080',
         '#98FB98'
     ];
+
+    const [showModal, setShowModal] = useState(false);
 
     const handleClick = (color, index) => {
         console.log(`Button ${index + 1} with color ${color} clicked`);
@@ -30,8 +34,10 @@ const StaticColors = (props) => {
         counter++;
         if (counter === 3)
         {
-            alert('Please slow down! Spamming makes it no fun for anyone.');
+            // alert('Please slow down! Spamming makes it no fun for anyone.');
             //some code ...
+            setShowModal(true);
+
             counter = 0;
         } 
         else{
@@ -39,20 +45,7 @@ const StaticColors = (props) => {
         }
     }
     setInterval(function() { counter = 0; }, 1000);
-    // var counter2 = 0;
-    // function ratelimit(color, index){
-    //     coutner2++;
-    //     if (counter2 == 30)
-    //     {
-    //         alert('Please slow down! Spamming makes it no fun for anyone.');
-    //         //some code ...
-    //         counter = 0;
-    //     } 
-    //     else{
-    //         handleClick(color, index);
-    //     }
-    // }
-    // setInterval(function() { counter = 0; }, 60000);
+
     const buttons = colors.map((color, index) => (
         <button
             key={index} 
@@ -87,6 +80,9 @@ const StaticColors = (props) => {
             <div className="grid-container">
                 {buttons}
             </div>
+            <ModalAlert show={showModal} onClose={() => setShowModal(false)}>
+                <p>Please slow down! Spamming makes it no fun for anyone.</p>
+            </ModalAlert>
         </div>
     );
 };

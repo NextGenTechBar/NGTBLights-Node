@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 // import './styles/patterns.scss'; // Make sure to create and style this CSS file
 import '../App.scss';
+import ModalAlert from './ModalAlert.js'
 
 const Custom = (props) => {
     const { client } = props.mqttClient;
+    const [showModal, setShowModal] = useState(false);
 
     const handleClick = (event, mode) => {
         event.preventDefault(); // Prevent the form from submitting and reloading the page
@@ -55,7 +57,9 @@ const Custom = (props) => {
         counter++;
         if (counter === 3)
         {
-            alert('Please slow down! Spamming makes it no fun for anyone.');
+            setShowModal(true);
+
+            // alert('Please slow down! Spamming makes it no fun for anyone.');
             //some code ...
             counter = 0;
         } 
@@ -72,6 +76,9 @@ const Custom = (props) => {
                     <input type="text" id="custom" name="Custom" placeholder="Enter a secret code!" />
                     <button type="submit" className='submit-button'>Submit</button>
                 </form>
+            <ModalAlert show={showModal} onClose={() => setShowModal(false)}>
+                <p>Please slow down! Spamming makes it no fun for anyone.</p>
+            </ModalAlert>
             </div>
         </div>
     );
