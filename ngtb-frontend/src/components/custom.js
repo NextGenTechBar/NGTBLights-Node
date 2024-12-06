@@ -34,13 +34,38 @@ const Custom = (props) => {
                 colorToSend = 'COLOR255000000000000255255255000';
                 break;
             case 'eva':
-                colorToSend = 'COLOR000000000000000000000000000000000000000000000255255255255255255255255255255255255255255255';
+                colorToSend = 'COLOR000000000000000000000000000000000000000000000255255255255255255255255255255255255255255';
+                break;
+            case 'julia':
+                colorToSend = 'FRACS011153077077077077255000190';
+                break;
+            case 'andrew':
+                colorToSend = 'OTHERandrewBlue';
+                break;
+            case 'reid':
+                colorToSend = 'COLOR024155204';
+                break;
+            case 'ponk':
+                colorToSend = 'FRACS942075739471327393942075739471327393942075739471327393';
+                break;
+            case 'leif':
+                colorToSend = 'FRACS255255000000000255255255000000000255255255000000000255255255000000000255';
+                break;
+            case 'jackson':
+                colorToSend = 'FRACS000255255255255255000000255255045000000255255255255255000000255255045000000255255255255255000000255255045000'
+                break;
+            case 'blaine':
+                colorToSend = 'FRACS000000000255255255255255255000000000000000000255255255000000000255255255255255255000000000000000000255255255';
+                break;
+            case 'kenny':
+                colorToSend = 'FRACS255000000255128000255128000255000000'
+                break;
+            case 'test':
+                colorToSend = 'DYNAMchase'
                 break;
             default:
                 colorToSend = 'invalid';
-
                 document.getElementById('custom').value = '';
-
                 document.getElementById('custom').placeholder = 'Invalid code. Try again!';
         }
 
@@ -53,32 +78,29 @@ const Custom = (props) => {
     };
 
     var counter = 0;
-    function ratelimit(event, mode){
+    function ratelimit(event, mode) {
+        event.preventDefault(); // Prevent the form from submitting and reloading the page
         counter++;
-        if (counter === 3)
-        {
+        if (counter === 3) {
             setShowModal(true);
-
-            // alert('Please slow down! Spamming makes it no fun for anyone.');
-            //some code ...
             counter = 0;
-        } 
-        else{
+        } else {
             handleClick(event, mode);
         }
     }
-    setInterval(function() { counter = 0; }, 1000);
+    setInterval(function () { counter = 0; }, 1000);
+
     return (
         <div className="static-colors-container">
             <h2>Secret Commands!</h2>
-            <div style={{backgroundColor: '#c1c6c8', borderRadius: '10px'}}>
+            <div style={{ backgroundColor: '#c1c6c8', borderRadius: '10px' }}>
                 <form onSubmit={(event) => ratelimit(event, document.getElementById('custom').value)}>
                     <input type="text" id="custom" name="Custom" placeholder="Enter a secret code!" />
                     <button type="submit" className='submit-button'>Submit</button>
                 </form>
-            <ModalAlert show={showModal} onClose={() => setShowModal(false)}>
-                <p>Please slow down! Spamming makes it no fun for anyone.</p>
-            </ModalAlert>
+                <ModalAlert show={showModal} onClose={() => setShowModal(false)}>
+                    <p>Please slow down! Spamming makes it no fun for anyone.</p>
+                </ModalAlert>
             </div>
         </div>
     );

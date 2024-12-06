@@ -19,8 +19,8 @@ const getClientId = () => {
     let clientId = Cookies.get('mqttClientId');
     if (!clientId) {
         clientId = `mqtt_web_user_${Math.random  ().toString(16).slice(3)}`;
-        Cookies.set('mqttClientId', clientId, { expires: 365 }); // Expires in 1 year
     }
+    Cookies.set('mqttClientId', clientId, { expires: 400 }); 
     return clientId;
 };
 function onConnect() {

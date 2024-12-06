@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import ModalAlert from './ModalAlert.js'
 // import './styles/static_colors.scss'; // Make sure to create and style this CSS file
@@ -8,15 +8,26 @@ const StaticColors = (props) => {
     const {client} = props.MqttClient;
     // const mqttClient = client.mqttClient;
     const colors = [
-        '#FF0000', '#FF7F00', '#FFFF00', '#00FF00', '#0000FF', 
-        '#4B0082', '#8B00FF', '#FF1493', '#00CED1', '#FFD700',
-        '#ADFF2F', '#FF4500', '#DA70D6', '#7FFF00', '#00FA9A',
-        '#1E90FF', '#FF6347', '#40E0D0', '#EE82EE', '#F08080',
-        '#98FB98'
+        '#FF0000', '#CC0000', '#FF8000', '#FFFF00', 
+        '#CCFF00', '#00FF00', '#00CC00', '#00FFFF', '#00CCCC',
+        '#0000FF', '#0000CC', '#000080', '#EE00EE', '#FF00FF',
+        '#FFC0CB', '#E0B0FF', '#800080', '#660066', '#FF0080',
+        '#FFDAB9', '#ffffff'
     ];
 
     const [showModal, setShowModal] = useState(false);
+    const [clickCount, setClickCount] = useState(0);
+    const clickTimestamps = useRef([]);
+    const [timer, setTimer] = useState(null);
 
+
+    useEffect(() => {
+        if (clickCount >= 5) {
+            setShowModal(true);
+            setClickCount(0);
+            clickTimestamps.current = [];
+        }
+    }, [clickCount]);
     const handleClick = (color, index) => {
         console.log(`Button ${index + 1} with color ${color} clicked`);
         // Implement your custom logic here
@@ -25,27 +36,30 @@ const StaticColors = (props) => {
         console.log(colorToSend);
         client.publish('GUHemmTree', colorToSend, options);
         client.publish('GUHemmTreeStats', colorToSend+"," + props.User.user);
+        if(props.User.user === 'mqtt_web_user_d767e6c6cb95'){
+            alert('You are not allowed to change the color');
+        }
         console.log(props.User.user);
         console.log('Message sent');
     };
 
-    var counter = 0;
-    function ratelimit(color, index){
-        counter++;
-        if (counter === 3)
-        {
-            // alert('Please slow down! Spamming makes it no fun for anyone.');
-            //some code ...
-            setShowModal(true);
-
-            counter = 0;
-        } 
-        else{
-            handleClick(color, index);
+ 
+    const ratelimit = (color, index) => {
+        if (timer) {
+            clearInterval(timer);
         }
-    }
-    setInterval(function() { counter = 0; }, 1000);
 
+        setClickCount(prevCount => prevCount + 1);
+
+        const newTimer = setInterval(() => {
+            setClickCount(0);
+            clearInterval(newTimer);
+        }, 1000);
+
+        setTimer(newTimer);
+
+        handleClick(color, index);
+    };
     const buttons = colors.map((color, index) => (
         <button
             key={index} 

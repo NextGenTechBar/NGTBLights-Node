@@ -69,7 +69,7 @@ const Animations = (props) => {
     setInterval(function() { counter = 0; }, 1000);
     const buttons = animations.map((animations, index) => (
         <div key={index} className="animation-button-container">
-            <button class='animation-button'
+            <button
                 key={index} 
                 className="animation-button" 
                 style={{ backgroundImage: images[index] }}
