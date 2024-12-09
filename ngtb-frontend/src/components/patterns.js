@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../App.scss';
 import ModalAlert from './ModalAlert.js'
 
@@ -10,7 +10,18 @@ const Pattern = (props) => {
     const { client } = props.mqttClient;
     const [showModal, setShowModal] = useState(false); // Define the showModal state
     const [showModalAlert, setShowModalAlert] = useState(false);
+    const [clickCount, setClickCount] = useState(0);
+    const clickTimestamps = useRef([]);
+    const [timer, setTimer] = useState(null);
 
+
+    useEffect(() => {
+        if (clickCount >= 5) {
+            setShowModalAlert(true);
+            setClickCount(0);
+            clickTimestamps.current = [];
+        }
+    }, [clickCount]);
     const pattern = [
         'COLOR255000000255000000000000255000000255255255000255255000',
         'FRACS255070000255000000255190000',
@@ -82,22 +93,23 @@ const Pattern = (props) => {
         console.log('Message sent');
     };
 
-    var counter = 0;
-    function ratelimit(pattern, index){
-        counter++;
-        if (counter === 3)
-        {
-            setShowModalAlert(true);
-
-            // alert('Please slow down! Spamming makes it no fun for anyone.');
-            //some code ...
-            counter = 0;
-        } 
-        else{
-            handleClick(pattern, index);
+    const ratelimit = (color, index) => {
+        if (timer) {
+            clearInterval(timer);
         }
-    }
-    setInterval(function() { counter = 0; }, 1000);
+
+        setClickCount(prevCount => prevCount + 1);
+
+        const newTimer = setInterval(() => {
+            setClickCount(0);
+            clearInterval(newTimer);
+        }, 1000);
+
+        setTimer(newTimer);
+
+        handleClick(color, index);
+    };
+
     function randomColors() {
         var textToSend = "FRACS"
         var numLoops = Math.floor(Math.random() * (5 - 2) + 2);

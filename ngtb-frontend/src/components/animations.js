@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 // import './styles/animations.scss'; // Make sure to create and style this CSS file
 import '../App.scss';
 import ModalAlert from './ModalAlert.js'
@@ -6,7 +6,18 @@ import ModalAlert from './ModalAlert.js'
 const Animations = (props) => {
     const {client} = props.mqttClient;
     const [showModal, setShowModal] = useState(false);
+    const [clickCount, setClickCount] = useState(0);
+    const clickTimestamps = useRef([]);
+    const [timer, setTimer] = useState(null);
 
+
+    useEffect(() => {
+        if (clickCount >= 5) {
+            setShowModal(true);
+            setClickCount(0);
+            clickTimestamps.current = [];
+        }
+    }, [clickCount]);
     const animations = [
         'DYNAMrainbow',
         'DYNAMchase',
@@ -51,22 +62,22 @@ const Animations = (props) => {
         console.log('Message sent');
     };
 
-    var counter = 0;
-    function ratelimit(animations, index){
-        counter++;
-        if (counter === 3)
-        {
-            setShowModal(true);
-
-            // alert('Please slow down! Spamming makes it no fun for anyone.');
-            //some code ...
-            counter = 0;
-        } 
-        else{
-            handleClick(animations, index);
+    const ratelimit = (color, index) => {
+        if (timer) {
+            clearInterval(timer);
         }
-    }
-    setInterval(function() { counter = 0; }, 1000);
+
+        setClickCount(prevCount => prevCount + 1);
+
+        const newTimer = setInterval(() => {
+            setClickCount(0);
+            clearInterval(newTimer);
+        }, 1000);
+
+        setTimer(newTimer);
+
+        handleClick(color, index);
+    };
     const buttons = animations.map((animations, index) => (
         <div key={index} className="animation-button-container">
             <button

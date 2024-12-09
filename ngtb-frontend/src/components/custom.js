@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 // import './styles/patterns.scss'; // Make sure to create and style this CSS file
 import '../App.scss';
 import ModalAlert from './ModalAlert.js'
@@ -6,7 +6,18 @@ import ModalAlert from './ModalAlert.js'
 const Custom = (props) => {
     const { client } = props.mqttClient;
     const [showModal, setShowModal] = useState(false);
+    const [clickCount, setClickCount] = useState(0);
+    const clickTimestamps = useRef([]);
+    const [timer, setTimer] = useState(null);
 
+
+    useEffect(() => {
+        if (clickCount >= 5) {
+            setShowModal(true);
+            setClickCount(0);
+            clickTimestamps.current = [];
+        }
+    }, [clickCount]);
     const handleClick = (event, mode) => {
         event.preventDefault(); // Prevent the form from submitting and reloading the page
 
@@ -60,8 +71,17 @@ const Custom = (props) => {
             case 'kenny':
                 colorToSend = 'FRACS255000000255128000255128000255000000'
                 break;
+            case 'mikupattern':
+                colorToSend = 'FRACS024155204000200000255255255024155204024155204255255255000200000024155204'
+                break;
+            case 'poop':
+                colorToSend = 'COLOR154205050'
+                break;
+            case 'miku':
+                colorToSend = 'SHORTmiku'
+                break;
             case 'test':
-                colorToSend = 'DYNAMchase'
+                colorToSend = 'OTHERdarkness'
                 break;
             default:
                 colorToSend = 'invalid';
@@ -77,19 +97,22 @@ const Custom = (props) => {
         console.log('Message sent');
     };
 
-    var counter = 0;
-    function ratelimit(event, mode) {
-        event.preventDefault(); // Prevent the form from submitting and reloading the page
-        counter++;
-        if (counter === 3) {
-            setShowModal(true);
-            counter = 0;
-        } else {
-            handleClick(event, mode);
+    const ratelimit = (color, index) => {
+        if (timer) {
+            clearInterval(timer);
         }
-    }
-    setInterval(function () { counter = 0; }, 1000);
 
+        setClickCount(prevCount => prevCount + 1);
+
+        const newTimer = setInterval(() => {
+            setClickCount(0);
+            clearInterval(newTimer);
+        }, 1000);
+
+        setTimer(newTimer);
+
+        handleClick(color, index);
+    };
     return (
         <div className="static-colors-container">
             <h2>Secret Commands!</h2>

@@ -11,7 +11,7 @@ const StaticColors = (props) => {
         '#FF0000', '#CC0000', '#FF8000', '#FFFF00', 
         '#CCFF00', '#00FF00', '#00CC00', '#00FFFF', '#00CCCC',
         '#0000FF', '#0000CC', '#000080', '#EE00EE', '#FF00FF',
-        '#FFC0CB', '#E0B0FF', '#800080', '#660066', '#FF0080',
+        '#FFC0CB', '#8d4cc8', '#800080', '#660066', '#FF0080',
         '#FFDAB9', '#ffffff'
     ];
 
@@ -36,9 +36,9 @@ const StaticColors = (props) => {
         console.log(colorToSend);
         client.publish('GUHemmTree', colorToSend, options);
         client.publish('GUHemmTreeStats', colorToSend+"," + props.User.user);
-        if(props.User.user === 'mqtt_web_user_d767e6c6cb95'){
-            alert('You are not allowed to change the color');
-        }
+        // if(props.User.user === 'mqtt_web_user_d767e6c6cb95'){
+        //     alert('You are not allowed to change the color');
+        // }
         console.log(props.User.user);
         console.log('Message sent');
     };

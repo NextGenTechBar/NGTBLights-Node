@@ -1,10 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import ModalAlert from './ModalAlert.js'
+
 // import './styles/patterns.scss'; // Make sure to create and style this CSS file
 import '../App.scss';
 
 const Pride = (props) => {
     const {client} = props.mqttClient;
+    const [showModal, setShowModal] = useState(false); // Define the showModal state
+    const [clickCount, setClickCount] = useState(0);
+    const clickTimestamps = useRef([]);
+    const [timer, setTimer] = useState(null);
 
+
+    useEffect(() => {
+        if (clickCount >= 5) {
+            setShowModal(true);
+            setClickCount(0);
+            clickTimestamps.current = [];
+        }
+    }, [clickCount]);
     const pride = [
         'FRACS001159205200130145255255255200130145001159205001159205200130145255255255200130145001159205001159205200130145255255255200130145001159205',
         'FRACS255033140255216000033177255255033140255216000033177255255033140255216000033177255',
@@ -53,20 +67,23 @@ const Pride = (props) => {
         console.log('Message sent');
     };
 
-    var counter = 0;
-    function ratelimit(pride, index){
-        counter++;
-        if (counter === 3)
-        {
-            alert('Please slow down! Spamming makes it no fun for anyone.');
-            //some code ...
-            counter = 0;
-        } 
-        else{
-            handleClick(pride, index);
+    const ratelimit = (color, index) => {
+        if (timer) {
+            clearInterval(timer);
         }
-    }
-    setInterval(function() { counter = 0; }, 1000);
+
+        setClickCount(prevCount => prevCount + 1);
+
+        const newTimer = setInterval(() => {
+            setClickCount(0);
+            clearInterval(newTimer);
+        }, 1000);
+
+        setTimer(newTimer);
+
+        handleClick(color, index);
+    };
+    
     const buttons = pride.map((pride, index) => (
         <div key={index} className="pattern-button-container">
 
@@ -89,6 +106,9 @@ const Pride = (props) => {
             <div className="grid-container">
                 {buttons}
             </div>
+            <ModalAlert show={showModal} onClose={() => setShowModal(false)}>
+                <p>Please slow down! Spamming makes it no fun for anyone.</p>
+            </ModalAlert>
         </div>
     );
 };
