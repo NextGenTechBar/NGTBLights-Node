@@ -47,9 +47,6 @@ const Custom = (props) => {
             case 'eva':
                 colorToSend = 'COLOR000000000000000000000000000000000000000000000255255255255255255255255255255255255255255';
                 break;
-            case 'julia':
-                colorToSend = 'FRACS011153077077077077255000190';
-                break;
             case 'andrew':
                 colorToSend = 'OTHERandrewBlue';
                 break;
@@ -80,8 +77,11 @@ const Custom = (props) => {
             case 'miku':
                 colorToSend = 'SHORTmiku'
                 break;
+            case 'julia':
+                colorToSend = 'OTHERjulia'
+                break;
             case 'test':
-                colorToSend = 'OTHERdarkness'
+                colorToSend = 'SHORTalex'
                 break;
             default:
                 colorToSend = 'invalid';

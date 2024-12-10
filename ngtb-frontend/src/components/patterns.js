@@ -17,7 +17,7 @@ const Pattern = (props) => {
 
     useEffect(() => {
         if (clickCount >= 5) {
-            setShowModalAlert(true);
+            setShowModalAlert   (true);
             setClickCount(0);
             clickTimestamps.current = [];
         }
