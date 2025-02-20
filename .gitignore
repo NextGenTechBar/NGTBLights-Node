@@ -1,4 +1,4 @@
 node_modules/
 .env
-.ppk
-.pem
+*.ppk
+*.pem
