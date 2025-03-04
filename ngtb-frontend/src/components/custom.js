@@ -45,7 +45,7 @@ const Custom = (props) => {
                 colorToSend = 'COLOR255000000000000255255255000';
                 break;
             case 'eva':
-                colorToSend = 'COLOR000000000000000000000000000000000000000000000255255255255255255255255255255255255255255';
+                colorToSend = 'COLOR000000000000000000000000000000000000000000000255255255255255255255255255255255255255255255';
                 break;
             case 'andrew':
                 colorToSend = 'OTHERandrewBlue';
