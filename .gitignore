@@ -1,3 +1,4 @@
+ngtb-node-server/certs/*
 node_modules/
 .env
 *.ppk
