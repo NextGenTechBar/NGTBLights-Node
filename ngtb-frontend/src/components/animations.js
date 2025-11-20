@@ -26,7 +26,8 @@ const Animations = (props) => {
         'DYNAMmulticolorwipe',
         'DYNAMtwinkle',
         'DYNAMpulses',
-        'DYNAMtwinkleMod'
+        'DYNAMtwinkleMod',
+	'DYNAMslide'
     ];
 
     const images = [
@@ -37,7 +38,8 @@ const Animations = (props) => {
         'url(./multicolorwipe.jpg)',
         'url(./twinkle.gif)',
         'url(./pulse.gif)',
-        'url(./twinklemod.gif)'
+        'url(./twinklemod.gif)',
+	'url(./slide.gif)'
     ];
     const labels = [
         'Rainbow Zoom', 
@@ -47,7 +49,8 @@ const Animations = (props) => {
         'Multi-Color Wipe',
         'Sparkle',
         'Pulse',
-        'Shimmer'
+        'Shimmer',
+	'Slide'
     ];
     const handleClick = (animations, index) => {
         console.log(`Button ${index + 1} with color ${animations} clicked`);
