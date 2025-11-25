@@ -96,6 +96,12 @@ const Custom = (props) => {
         }
 
         var options = { retain: true };
+
+	//Don't retain messages that are intended to be a one-time effect
+	if(colorToSend.includes('SHORT')){
+		options = { retain: false };
+	}
+
         console.log(colorToSend);
         client.publish('GUHemmTree', colorToSend, options);
         client.publish('GUHemmTreeStats', colorToSend + "," + props.User.user);
@@ -184,10 +190,13 @@ async function sendWebhook(text) {
     };
 
     return (
-    <div className="static-colors-container">
+    //restyled this div because the default made it weird and squished and not scroll properly on mobile. There's still one problem -- the red extends too far (because paddingBottom), but if you remove that, you can't click the generate button cause it's behind the arrows div. If we can extend the blue scrollable region, that would fix it
+    //<div className="static-colors-container">
+    <div style={{backgroundColor: '#b12a3b', padding: '20px', borderRadius: '10px', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'column', marginTop: '30vh', paddingBottom: '80px', width: '100%', boxSizing: 'border-box'}}>
+
         {/* Secret Commands Section */}
 	<h2>Secret Commands!</h2>
-        <div style={{ backgroundColor: '#c1c6c8', borderRadius: '10px', padding: '7px', marginBottom: '20px' }}>
+        <div style={{ backgroundColor: '#c1c6c8', borderRadius: '10px', padding: '7px', marginBottom: '0px' }}>
             
             <form onSubmit={(event) => ratelimit(event, document.getElementById('custom').value)}>
                 <input type="text" id="custom" name="Custom" placeholder="Enter a secret code!" />
@@ -198,7 +207,7 @@ async function sendWebhook(text) {
         </div>
 
 
-<h2>-----------------------------------</h2>
+<h2>-----</h2>
 
 	<h2><u>Experimental</u></h2>
 	<font color="white"><b>Set the color of the lights using AI!</b> <br></br><br></br>
