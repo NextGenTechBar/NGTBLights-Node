@@ -90,7 +90,7 @@ const StaticColors = (props) => {
     }
     return (
         <div className="static-colors-container">
-            <h1>Under Maintanence, Try Again Later!</h1> //Colors
+            <h1>Colors</h1>
             <div className="grid-container">
                 {buttons}
             </div>
