@@ -6,11 +6,14 @@ const https = require('https');
 const cors = require('cors'); // import cors
 const app = express(); // creating an express app
 const fs = require('fs');
+const morgan = require('morgan'); //logging that Tyler wanted to implement to see unwanted connections
 //const PORT = 8080; // setting the port, default to 3000 if not specified
 const PORT = 443; 
 
 console.log('Starting');
 app.use(cors()); // enable CORS for all routes
+
+app.use(morgan('combined'));
 
 app.use(express.static(path.join(__dirname, '../ngtb-frontend/build')));
 app.get('*', (req, res) => {
