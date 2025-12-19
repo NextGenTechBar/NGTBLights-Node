@@ -58,6 +58,9 @@ const Animations = (props) => {
         // Implement your custom logic here
         const colorToSend = animations;
         var options = { retain: true };
+	if(colorToSend.includes('DYNAMtwinkleMod') || colorToSend.includes('DYNAMslide')){ //don't retain messages that need to modify whatever is already being displayed
+		options = { retain: false };
+	}
         console.log(colorToSend);
         client.publish('GUHemmTree', colorToSend, options);
         client.publish('GUHemmTreeStats', colorToSend+"," + props.User.user);
