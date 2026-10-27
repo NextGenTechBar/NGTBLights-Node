@@ -9,7 +9,7 @@ const Custom = (props) => {
     const [clickCount, setClickCount] = useState(0);
     const clickTimestamps = useRef([]);
     const [timer, setTimer] = useState(null);
-
+    const [genieResponse, setGenieResponse] = useState('');
 
     useEffect(() => {
         if (clickCount >= 5) {
@@ -133,7 +133,11 @@ const handleClickExperimental = (event, mode) => {
 
 
 async function sendWebhook(text) {
+    const jobId = crypto.randomUUID(); // Generate a unique jobId for each request
     const webhookURL = "https://webhooks.workato.com/webhooks/rest/9aff14d4-3289-42d9-91b4-db436e64bf06/hemmtreewizard-webhook";
+    const apiURL = `http://localhost:3001/api/jobs/${jobId}`;
+
+    setGenieResponse("No Response Yet...");
 
     try {
         const response = await fetch(webhookURL, {
@@ -141,19 +145,56 @@ async function sendWebhook(text) {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ text: text })
+            body: JSON.stringify({ text, jobId }) // Generate a unique jobId for each request
         });
 
-        if (response.ok) {
-            console.log("Command sent! Wait ~15 seconds for the tree to display it");
-        } else {
+        if (!response.ok) {
+            setGenieResponse(`Request failed: ${response.status}`);
             console.error("Failed to send text. Status:", response.status);
+            return;
         }
+        
+        console.log("Command sent! Wait ~15 seconds for the tree to display it");
+        await waitForGenieResponse(apiURL);
     } catch (error) {
         console.error("Error:", error.message);
     }
 }
 
+async function waitForGenieResponse(apiURL) {
+    const maxAttempts = 30; // Wait for up to 30 seconds
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+
+        try {
+            const response = await fetch(apiURL);
+
+            if (response.status === 404) {
+                continue; // If the response is 404, continue to the next attempt (404 is expected while waiting for the response)
+            }
+            
+            if (!response.ok) {
+                console.error("Failed to fetch genie response. Status:", response.status);
+                continue;
+            }
+
+            const data = await response.json();
+
+            // If the result is not a string, convert it to a JSON string for display purposes
+            const result = typeof data.result === "string" ? data.result : JSON.stringify(data.result);
+
+            setGenieResponse(result);
+            return; // Exit the loop once a valid response is received
+
+        } catch (error) {
+            console.error("Error while waiting for genie response:", error.message);
+            setGenieResponse("Error retrieving wizard's response.");
+            return;
+        }
+    }
+    setGenieResponse("No response received within the expected time.");
+}
 
     const ratelimit = (color, index) => {
         if (timer) {
@@ -231,6 +272,8 @@ async function sendWebhook(text) {
                     Generate
                 </button>
             </form>
+
+            <p id="GenieResponse" style={{ marginTop: '10px', color: 'black' }}>No Response Yet...</p>
         </div>
 
         {/* Modal Alert */}
