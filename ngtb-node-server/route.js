@@ -1,11 +1,12 @@
-import React from "react";
-
 const express = require("express");
 
+const cors = require("cors");
 const app = express();
 //Use alternate port as 3000 is used by the React frontend
 const port = Number(process.env.PORT) || 3001;
 const jobs = new Map();
+
+app.use(cors({ origin: "http://localhost:3000" }));
 
 console.log(`Server is running on http://localhost:${port}`);
 
