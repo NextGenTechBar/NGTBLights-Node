@@ -132,7 +132,11 @@ const handleClickExperimental = (event, mode) => {
     };
 
 
-//
+/** 
+ * Sends a request to the backend (ngtb-node-server/route.js) to trigger a Workato workflow with the given text.
+ * @param {string} text - The text to send to the backend for processing by the Workato workflow.
+ * Note: The response from the backend will be available asynchronously and can be retrieved using the waitForGenieResponse function.
+*/
 async function sendWebhook(text) {
     const jobId = crypto.randomUUID(); // Generate a unique jobId for each request
     const apiURL = `/api/jobs/${jobId}`;

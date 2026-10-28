@@ -1,3 +1,11 @@
+/**
+ * This file uses Express to handle outgoing and incoming HTTP requests.
+ * It defines 2 post routes: /api/genie and /api/agent-callback and one get route: /api/jobs/:jobId. They are as follows:
+   /api/genie: Endpoint for sending requests to Workato and receiving asynchronous responses (sends user request to hemmTree genie).
+   /api/agent-callback: Endpoint for handling callbacks from Workato containing jobId and response (genie sends response back to website).
+   /api/jobs/:jobId: Endpoint for retrieving the status and result of a previously submitted job (get jobs that genie has sent).
+ */
+
 const express = require("express");
 
 const cors = require("cors");
@@ -14,6 +22,13 @@ console.log(`Server is running on http://localhost:${port}`);
 
 app.use(express.static(__dirname));
 
+/**
+ * Endpoint for sending requests to Workato and receiving asynchronous responses.
+ * @param {object} req - The Express request object containing the text and jobId.
+ * @param {object} res - The Express response object used to send a response back to the client.
+ * References: Currently posted to by sendWebhook in ngtb-frontend/src/components/custom.js upon clicking of submit button
+   in experimental field.
+ */
 app.post("/api/genie", async (req, res) => {
   if (!workatoWebhookUrl) {
     return res.status(500).json({ error: "WORKATO_WEBHOOK_URL is not configured" });
@@ -50,6 +65,13 @@ app.post("/api/genie", async (req, res) => {
 // Workato may send either a JSON object or a plain-text result.
 app.use("/api/agent-callback", express.text({ type: "*/*" }));
 
+
+/**
+ * Endpoint for handling callbacks from Workato. Expects a JSON object or plain-text result containing a jobId and response.
+ * @param {object} req - The Express request object containing the callback data from Workato.
+ * @param {object} res - The Express response object used to send a response back to Workato.
+ * References: Currently linked to REC | NGTBLights | HTTP Sender. Line 3 sends JSON {jobId, response} to this post route. 
+ */
 app.post("/api/agent-callback", (req, res) => {
   console.log("Workato callback received:", req.body);
 
@@ -82,6 +104,13 @@ app.post("/api/agent-callback", (req, res) => {
   res.json({ ok: true });
 });
 
+
+/**
+ * Endpoint for retrieving the status and result of a previously submitted job.
+ * @param {object} req - The Express request object containing the jobId as a URL parameter.
+ * @param {object} res - The Express response object used to send the job status and result back to the client.
+ * References: Not currently used by any part of the application.
+ */
 app.get("/api/jobs/:jobId", (req, res) => {
   console.log("Job requested:", req.params.jobId);
   const job = jobs.get(req.params.jobId);
