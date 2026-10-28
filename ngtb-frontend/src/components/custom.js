@@ -132,15 +132,16 @@ const handleClickExperimental = (event, mode) => {
     };
 
 
+//
 async function sendWebhook(text) {
     const jobId = crypto.randomUUID(); // Generate a unique jobId for each request
-    const webhookURL = "https://webhooks.workato.com/webhooks/rest/9aff14d4-3289-42d9-91b4-db436e64bf06/hemmtreewizard-webhook";
-    const apiURL = `http://localhost:3001/api/jobs/${jobId}`;
+    const apiURL = `/api/jobs/${jobId}`;
 
     setGenieResponse("No Response Yet...");
-
+    
     try {
-        const response = await fetch(webhookURL, {
+        //This route calls the post endpoint in ngtb-node-server/route.js to send info to Genie
+        const response = await fetch('/api/genie', {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -168,23 +169,24 @@ async function waitForGenieResponse(apiURL) {
         await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
 
         try {
-            const response = await fetch(apiURL);
+            const result = await fetch(apiURL);
 
-            if (response.status === 404) {
+            if (result.status === 404) {
                 continue; // If the response is 404, continue to the next attempt (404 is expected while waiting for the response)
             }
             
-            if (!response.ok) {
-                console.error("Failed to fetch genie response. Status:", response.status);
+            if (!result.ok) {
+                console.error("Failed to fetch genie response. Status:", result.status);
                 continue;
             }
 
-            const data = await response.json();
+            const data = await result.json();
 
-            // If the result is not a string, convert it to a JSON string for display purposes
-            const result = typeof data.result === "string" ? data.result : JSON.stringify(data.result);
+            const response = typeof data.result === "string"
+                ? data.result
+                : data.result?.text ?? JSON.stringify(data.result);
 
-            setGenieResponse(result);
+            setGenieResponse(response);
             return; // Exit the loop once a valid response is received
 
         } catch (error) {
@@ -273,7 +275,7 @@ async function waitForGenieResponse(apiURL) {
                 </button>
             </form>
 
-            <p id="GenieResponse" style={{ marginTop: '10px', color: 'black' }}>No Response Yet...</p>
+            <p id="GenieResponse" style={{ marginTop: '10px', color: 'black' }}>{genieResponse || 'No Response Yet...'}</p>
         </div>
 
         {/* Modal Alert */}
