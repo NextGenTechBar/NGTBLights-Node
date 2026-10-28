@@ -12,7 +12,7 @@ const cors = require("cors");
 const app = express();
 //Use alternate port as 3000 is used by the React frontend
 const port = Number(process.env.PORT) || 3001;
-const workatoWebhookUrl = process.env.WORKATO_WEBHOOK_URL;
+const workatoWebhookUrl = "https://webhooks.workato.com/webhooks/rest/9aff14d4-3289-42d9-91b4-db436e64bf06/hemmtreewizard-webhook";
 const jobs = new Map();
 
 app.use(cors({ origin: "http://localhost:3000" }));

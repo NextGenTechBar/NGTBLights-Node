@@ -111,7 +111,7 @@ const Custom = (props) => {
 
 
 
-const handleClickExperimental = (event, mode) => {
+    const handleClickExperimental = (event, mode) => {
         event.preventDefault(); // Prevent the form from submitting and reloading the page
 
         var colorToSend = '';
@@ -126,81 +126,97 @@ const handleClickExperimental = (event, mode) => {
         //console.log(colorToSend);
         //client.publish('GUHemmTree', colorToSend, options);
         client.publish('GUHemmTreeStats', "AI- "+mode + "," + props.User.user);
-	sendWebhook(mode);
+	    sendWebhook(mode);
 
         console.log('Message sent');
     };
 
 
-/** 
- * Sends a request to the backend (ngtb-node-server/route.js) to trigger a Workato workflow with the given text.
- * @param {string} text - The text to send to the backend for processing by the Workato workflow.
- * Note: The response from the backend will be available asynchronously and can be retrieved using the waitForGenieResponse function.
-*/
-async function sendWebhook(text) {
-    const jobId = crypto.randomUUID(); // Generate a unique jobId for each request
-    const apiURL = `/api/jobs/${jobId}`;
+    /** 
+     * Sends a request to the backend (ngtb-node-server/route.js) to trigger a Workato workflow with the given text.
+     * @param {string} text - The text to send to the backend for processing by the Workato workflow.
+     * Note: The response from the backend will be available asynchronously and can be retrieved using the waitForGenieResponse function.
+    */
+    async function sendWebhook(text) {
+        const jobId = crypto.randomUUID(); // Generate a unique jobId for each request
+        const apiURL = `/api/jobs/${jobId}`;
 
-    setGenieResponse("No Response Yet...");
-    
-    try {
-        //This route calls the post endpoint in ngtb-node-server/route.js to send info to Genie
-        const response = await fetch('/api/genie', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ text, jobId }) // Generate a unique jobId for each request
-        });
+        setGenieResponse("No Response Yet...");
 
-        if (!response.ok) {
-            setGenieResponse(`Request failed: ${response.status}`);
-            console.error("Failed to send text. Status:", response.status);
-            return;
-        }
+        toggleSubmit(); // Disable the submit button while waiting for the response
         
-        console.log("Command sent! Wait ~15 seconds for the tree to display it");
-        await waitForGenieResponse(apiURL);
-    } catch (error) {
-        console.error("Error:", error.message);
-    }
-}
-
-async function waitForGenieResponse(apiURL) {
-    const maxAttempts = 30; // Wait for up to 30 seconds
-
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
-
         try {
-            const result = await fetch(apiURL);
+            //This route calls the post endpoint in ngtb-node-server/route.js to send info to Genie
+            const response = await fetch('/api/genie', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ text, jobId }) // Generate a unique jobId for each request
+            });
 
-            if (result.status === 404) {
-                continue; // If the response is 404, continue to the next attempt (404 is expected while waiting for the response)
+            if (!response.ok) {
+                setGenieResponse(`Request failed: ${response.status}`);
+                console.error("Failed to send text. Status:", response.status);
+                return;
             }
             
-            if (!result.ok) {
-                console.error("Failed to fetch genie response. Status:", result.status);
-                continue;
-            }
-
-            const data = await result.json();
-
-            const response = typeof data.result === "string"
-                ? data.result
-                : data.result?.text ?? JSON.stringify(data.result);
-
-            setGenieResponse(response);
-            return; // Exit the loop once a valid response is received
-
+            console.log("Command sent! Wait ~15 seconds for the tree to display it");
+            await waitForGenieResponse(apiURL);
         } catch (error) {
-            console.error("Error while waiting for genie response:", error.message);
-            setGenieResponse("Error retrieving wizard's response.");
-            return;
+            console.error("Error:", error.message);
+        } finally {
+            toggleSubmit(); // Re-enable the submit button after the response is received or an error occurs
         }
     }
-    setGenieResponse("No response received within the expected time.");
-}
+
+    /**
+     * Wait 30 seconds for response from the backend before timing out. Upon getting a response, it updates the UI with the result.
+     * @param {*} apiURL - The URL to poll for the status and result of the previously submitted job.
+     * References: Called by sendWebhook function after sending a request to the backend (apiURL is GET /api/jobs/:jobId).
+     */
+    async function waitForGenieResponse(apiURL) {
+        const maxAttempts = 30; // Wait for up to 30 seconds
+
+        for (let attempt = 0; attempt < maxAttempts; attempt++) {
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
+
+            try {
+                const result = await fetch(apiURL);
+
+                if (result.status === 404) {
+                    continue; // If the response is 404, continue to the next attempt (404 is expected while waiting for the response)
+                }
+                
+                if (!result.ok) {
+                    console.error("Failed to fetch genie response. Status:", result.status);
+                    continue;
+                }
+
+                const data = await result.json();
+
+                const response = typeof data.result === "string"
+                    ? data.result
+                    : data.result?.text ?? JSON.stringify(data.result);
+
+                setGenieResponse(response);
+                return; // Exit the loop once a valid response is received
+
+            } catch (error) {
+                console.error("Error while waiting for genie response:", error.message);
+                setGenieResponse("Error retrieving wizard's response.");
+                return;
+            }
+        }
+        setGenieResponse("No response received within the expected time.");
+    }
+
+    function toggleSubmit() {
+        const submitButton = document.querySelector('.submit-button');
+        if (submitButton) {
+            submitButton.disabled = !submitButton.disabled;
+        }
+    }
 
     const ratelimit = (color, index) => {
         if (timer) {
@@ -237,58 +253,58 @@ async function waitForGenieResponse(apiURL) {
     };
 
     return (
-    //restyled this div because the default made it weird and squished and not scroll properly on mobile. There's still one problem -- the red extends too far (because paddingBottom), but if you remove that, you can't click the generate button cause it's behind the arrows div. If we can extend the blue scrollable region, that would fix it
-    //<div className="static-colors-container">
-    <div style={{backgroundColor: '#b12a3b', padding: '20px', borderRadius: '10px', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'column', marginTop: '30vh', paddingBottom: '80px', width: '100%', boxSizing: 'border-box'}}>
+        //restyled this div because the default made it weird and squished and not scroll properly on mobile. There's still one problem -- the red extends too far (because paddingBottom), but if you remove that, you can't click the generate button cause it's behind the arrows div. If we can extend the blue scrollable region, that would fix it
+        //<div className="static-colors-container">
+        <div style={{backgroundColor: '#b12a3b', padding: '20px', borderRadius: '10px', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'column', marginTop: '30vh', paddingBottom: '80px', width: '100%', boxSizing: 'border-box'}}>
 
-        {/* Secret Commands Section */}
-	<h2>Secret Commands!</h2>
-        <div style={{ backgroundColor: '#c1c6c8', borderRadius: '10px', padding: '7px', marginBottom: '0px' }}>
-            
-            <form onSubmit={(event) => ratelimit(event, document.getElementById('custom').value)}>
-                <input type="text" id="custom" name="Custom" placeholder="Enter a secret code!" />
-                <button type="submit" className='submit-button' style={{ display: 'block', marginTop: '10px' }}>
-                    Submit
-                </button>
-            </form>
+            {/* Secret Commands Section */}
+        <h2>Secret Commands!</h2>
+            <div style={{ backgroundColor: '#c1c6c8', borderRadius: '10px', padding: '7px', marginBottom: '0px' }}>
+                
+                <form onSubmit={(event) => ratelimit(event, document.getElementById('custom').value)}>
+                    <input type="text" id="custom" name="Custom" placeholder="Enter a secret code!" />
+                    <button type="submit" className='submit-button' style={{ display: 'block', marginTop: '10px' }}>
+                        Submit
+                    </button>
+                </form>
+            </div>
+
+
+        <h2>-----</h2>
+
+        <h2><u>Experimental</u></h2>
+        <font color="white"><b>Set the color of the lights using AI!</b> <br></br><br></br>
+        1. Enter a color theme (ex: "ocean", "pickle", "autumn" etc).<br></br>
+        2. Wait ~15 seconds<br></br>
+        3. See the generated color scheme on the tree!
+        </font>
+        <br></br>
+            {/* Experimental Section */}
+            <div style={{ backgroundColor: '#c1c6c8', borderRadius: '12px', padding: '22px'}}>
+                
+                <form onSubmit={(event) => ratelimitExperimental(event, document.getElementById('ExperimentalField').value)}>
+                    <input
+                        type="text"
+                        id="ExperimentalField"
+                        name="Custom2"
+                        placeholder="Enter a color theme!"
+                        style={{ marginTop: '10px', width: '100%' }}
+                    />
+                    <button type="submit" className='submit-button' style={{ display: 'block', marginTop: '10px' }}>
+                        Generate
+                    </button>
+                </form>
+
+                <p id="GenieResponse" style={{ marginTop: '10px', color: 'black' }}>{genieResponse || 'No Response Yet...'}</p>
+            </div>
+
+            {/* Modal Alert */}
+            <ModalAlert show={showModal} onClose={() => setShowModal(false)}>
+                <p>Please slow down! Spamming makes it no fun for anyone.</p>
+            <p>If you are using Experimental AI mode, please allow 15-30 seconds after pressing generate for the mode to be generated and displayed</p>
+            </ModalAlert>
         </div>
-
-
-<h2>-----</h2>
-
-	<h2><u>Experimental</u></h2>
-	<font color="white"><b>Set the color of the lights using AI!</b> <br></br><br></br>
-	1. Enter a color theme (ex: "ocean", "pickle", "autumn" etc).<br></br>
-	2. Wait ~15 seconds<br></br>
-	3. See the generated color scheme on the tree!
-	</font>
-	<br></br>
-        {/* Experimental Section */}
-        <div style={{ backgroundColor: '#c1c6c8', borderRadius: '12px', padding: '22px'}}>
-            
-            <form onSubmit={(event) => ratelimitExperimental(event, document.getElementById('ExperimentalField').value)}>
-                <input
-                    type="text"
-                    id="ExperimentalField"
-                    name="Custom2"
-                    placeholder="Enter a color theme!"
-                    style={{ marginTop: '10px', width: '100%' }}
-                />
-                <button type="submit" className='submit-button' style={{ display: 'block', marginTop: '10px' }}>
-                    Generate
-                </button>
-            </form>
-
-            <p id="GenieResponse" style={{ marginTop: '10px', color: 'black' }}>{genieResponse || 'No Response Yet...'}</p>
-        </div>
-
-        {/* Modal Alert */}
-        <ModalAlert show={showModal} onClose={() => setShowModal(false)}>
-            <p>Please slow down! Spamming makes it no fun for anyone.</p>
-	    <p>If you are using Experimental AI mode, please allow 15-30 seconds after pressing generate for the mode to be generated and displayed</p>
-        </ModalAlert>
-    </div>
-);
+    );
 
 
 
