@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
+import Markdown from 'react-markdown';
 // import './styles/patterns.scss'; // Make sure to create and style this CSS file
 import '../App.scss';
+import './styles/custom-container.scss'; // Import the custom styles for the Custom component
 import ModalAlert from './ModalAlert.js'
 
 const Custom = (props) => {
@@ -141,7 +143,7 @@ const Custom = (props) => {
         const jobId = crypto.randomUUID(); // Generate a unique jobId for each request
         const apiURL = `/api/jobs/${jobId}`;
 
-        setGenieResponse("No Response Yet...");
+        setGenieResponse("The wizard is casting...");
 
         toggleSubmit(); // Disable the submit button while waiting for the response
         
@@ -178,6 +180,8 @@ const Custom = (props) => {
     async function waitForGenieResponse(apiURL) {
         const maxAttempts = 30; // Wait for up to 30 seconds
 
+        let dots = ".";
+
         for (let attempt = 0; attempt < maxAttempts; attempt++) {
             await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
 
@@ -185,6 +189,13 @@ const Custom = (props) => {
                 const result = await fetch(apiURL);
 
                 if (result.status === 404) {
+                    
+                    setGenieResponse(`The wizard is casting${dots}`);
+                    dots += ".";
+                    if (dots.length > 3) {
+                        dots = ".";
+                    }
+                    
                     continue; // If the response is 404, continue to the next attempt (404 is expected while waiting for the response)
                 }
                 
@@ -208,7 +219,7 @@ const Custom = (props) => {
                 return;
             }
         }
-        setGenieResponse("No response received within the expected time.");
+        setGenieResponse("The wizard's spell failed :(");
     }
 
     function toggleSubmit() {
@@ -255,10 +266,10 @@ const Custom = (props) => {
     return (
         //restyled this div because the default made it weird and squished and not scroll properly on mobile. There's still one problem -- the red extends too far (because paddingBottom), but if you remove that, you can't click the generate button cause it's behind the arrows div. If we can extend the blue scrollable region, that would fix it
         //<div className="static-colors-container">
-        <div style={{backgroundColor: '#b12a3b', padding: '20px', borderRadius: '10px', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'column', marginTop: '30vh', paddingBottom: '80px', width: '100%', boxSizing: 'border-box'}}>
+        <div style={{backgroundColor: '#b12a3b', padding: '20px', borderRadius: '10px', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'column', paddingBottom: '80px', width: '100%', boxSizing: 'border-box'}}>
 
             {/* Secret Commands Section */}
-        <h2>Secret Commands!</h2>
+        {/*<h2>Secret Commands!</h2>
             <div style={{ backgroundColor: '#c1c6c8', borderRadius: '10px', padding: '7px', marginBottom: '0px' }}>
                 
                 <form onSubmit={(event) => ratelimit(event, document.getElementById('custom').value)}>
@@ -270,9 +281,9 @@ const Custom = (props) => {
             </div>
 
 
-        <h2>-----</h2>
+        <h2>-----</h2>*/}
 
-        <h2><u>Experimental</u></h2>
+        <h2 style={{ textAlign: 'center' }}><u>Speak with the HemmTree Wizard!</u></h2>
         <font color="white"><b>Set the color of the lights using AI!</b> <br></br><br></br>
         1. Enter a color theme (ex: "ocean", "pickle", "autumn" etc).<br></br>
         2. Wait ~15 seconds<br></br>
@@ -280,7 +291,7 @@ const Custom = (props) => {
         </font>
         <br></br>
             {/* Experimental Section */}
-            <div style={{ backgroundColor: '#c1c6c8', borderRadius: '12px', padding: '22px'}}>
+            <div id="experimental-section" style={{ backgroundColor: '#c1c6c8', borderRadius: '12px', padding: '22px'}}>
                 
                 <form onSubmit={(event) => ratelimitExperimental(event, document.getElementById('ExperimentalField').value)}>
                     <input
@@ -288,15 +299,19 @@ const Custom = (props) => {
                         id="ExperimentalField"
                         name="Custom2"
                         placeholder="Enter a color theme!"
-                        style={{ marginTop: '10px', width: '100%' }}
+                        style={{ marginTop: '10px', width: '70%' }}
                     />
                     <button type="submit" className='submit-button' style={{ display: 'block', marginTop: '10px' }}>
                         Generate
                     </button>
                 </form>
 
-                <p id="GenieResponse" style={{ marginTop: '10px', color: 'black' }}>{genieResponse || 'No Response Yet...'}</p>
+                <div style={{ backgroundColor: '#c1c6c8', borderRadius: '12px', padding: '22px', marginTop: '10px' }}>
+                    <h3>Wizard's Tower:</h3>
+                    <Markdown id="GenieResponse" style={{ marginTop: '10px', color: 'black'}}>{genieResponse || 'The wizard is sleeping...'}</Markdown>
+                </div>
             </div>
+            
 
             {/* Modal Alert */}
             <ModalAlert show={showModal} onClose={() => setShowModal(false)}>

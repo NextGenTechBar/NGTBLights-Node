@@ -32,54 +32,7 @@ $gradient-radial: radial-gradient(#b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f
 
 /* styles.scss */
 
-/* General styles */
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background: $delft-blue;
-    align-items: flex-start;
-    padding-top: 50px;
-}
 
-h1, h2 {
-    color: $white;
-}
-
-button {
-    display: inline-block;
-    width: 20vw;
-    max-width: 150px;
-    height: 50px;
-    margin: 10px;
-    border-radius: 15px;
-    // background-color: $atomic-tangerine;
-    color: $white;
-    text-align: center;
-    font-size: 16px;
-    cursor: pointer;
-    box-shadow: 4px rgba(0, 0, 0, 1);
-    transition: transform 0.1s, box-shadow 0.1s;
-    background-size: cover; /* Ensure the background image covers the button */
-    background-position: center; /* Center the background image */
-}
-
-button:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transform: scale(1.1);
-}
-
-button:active {
-    transform: scale(0.8);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-.submit-button {
-    background-color: $cardinal;
-    width: auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow to submit button */
-}
 
 /* App container styles */
 .app-container {
@@ -224,7 +177,6 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transform: scale(1.1);
 }
 
 button[type="submit"]:active {
@@ -237,4 +189,132 @@ button[type="submit"]:active {
     font-size: 14px;
     margin: 1px;
     text-align: center;
+}
+
+
+
+
+
+/* Boxed tabs: the selected tab shares the panel's background and border, and a 1px offset fuses the two. */
+.tabs {
+    --bt-tab: #d6dde6;
+    --bt-tab-hover: #e2e8f0;
+    --bt-muted: #4a576d;
+    --bt-text: #1c2430;
+    --bt-border: #dde3ec;
+    --bt-focus: #2563eb;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 560px;
+    height: 20%;
+    color: var(--bt-text);
+    display: flex;
+    gap: 6px;
+    padding: 0 10px;
+}
+
+.tabs .tab {
+    position: relative;
+    top: 1px;
+    margin: 0;
+    border: 1px solid transparent;
+    border-bottom: 0;
+    background: var(--bt-tab);
+    color: var(--bt-muted);
+    font: inherit;
+    font-size: .87rem;
+    font-weight: 700;
+    padding: 11px 20px 13px;
+    border-radius: 12px 12px 0 0;
+    cursor: pointer;
+    transition: background-color .15s;
+}
+
+.tabs .tab:hover {
+    background: var(--bt-tab-hover);
+}
+
+.tabs .tab[aria-selected="true"] {
+    background: $cardinal;
+    color: $white;
+}
+
+.tabs h2 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+}
+
+.tabs p {
+    margin: 0;
+    font-size: .88rem;
+    line-height: 1.7;
+    color: var(--bt-muted);
+}
+
+.tabs .tab:focus-visible {
+    outline: 2px solid var(--bt-focus);
+    outline-offset: -4px;
+}
+
+.tabs [hidden] {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    .tabs [role="tab"] {
+        padding: 11px 14px 13px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tabs .tab {
+        transition: none;
+    }
+}
+
+
+/* General styles */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: $delft-blue;
+    align-items: flex-start;
+    padding-top: 50px;
+}
+
+h1, h2 {
+    color: $white;
+}
+
+button {
+    display: inline-block;
+    width: 20vw;
+    max-width: 150px;
+    height: 50px;
+    margin: 10px;
+    border-radius: 15px;
+    // background-color: $atomic-tangerine;
+    color: $white;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 4px rgba(0, 0, 0, 1);
+    transition: transform 0.1s, box-shadow 0.1s;
+    background-size: cover; /* Ensure the background image covers the button */
+    background-position: center; /* Center the background image */
+}
+
+.submit-button {
+    background-color: $cardinal;
+    width: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow to submit button */
+}
+
+.app-container > [role="tabpanel"] {
+    width: 100%;
+    max-width: 560px;
 }

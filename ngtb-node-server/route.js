@@ -21,6 +21,8 @@ app.use(express.json());
 console.log(`Server is running on http://localhost:${port}`);
 
 app.use(express.static(__dirname));
+// Workato may send either a JSON object or a plain-text result.
+app.use("/api/agent-callback", express.text({ type: "*/*" }));
 
 /**
  * Endpoint for sending requests to Workato and receiving asynchronous responses.
@@ -62,10 +64,6 @@ app.post("/api/genie", async (req, res) => {
   }
 });
 
-// Workato may send either a JSON object or a plain-text result.
-app.use("/api/agent-callback", express.text({ type: "*/*" }));
-
-
 /**
  * Endpoint for handling callbacks from Workato. Expects a JSON object or plain-text result containing a jobId and response.
  * @param {object} req - The Express request object containing the callback data from Workato.
@@ -103,7 +101,6 @@ app.post("/api/agent-callback", (req, res) => {
 
   res.json({ ok: true });
 });
-
 
 /**
  * Endpoint for retrieving the status and result of a previously submitted job.

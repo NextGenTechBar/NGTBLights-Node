@@ -39,7 +39,13 @@ function App() {
     // console.log(clientId);
     const [currentView, setCurrentView] = useState('staticColors');
 
-    const views = ['staticColors', 'pattern', 'animations', 'custom'];
+    const tabs = [
+        { id: 'bt-tab-0', label: 'Colors', view: 'staticColors', component: StaticColors, mqttProp: 'MqttClient' },
+        { id: 'bt-tab-1', label: 'Patterns', view: 'pattern', component: Pattern, mqttProp: 'mqttClient' },
+        { id: 'bt-tab-2', label: 'Animations', view: 'animations', component: Animations, mqttProp: 'mqttClient' },
+        { id: 'bt-tab-3', label: 'Custom', view: 'custom', component: Custom, mqttProp: 'mqttClient' }
+    ];
+    const views = tabs.map((tab) => tab.view);
     const [browser, setBrowser] = useState('');
 
     useEffect(() => {
@@ -68,6 +74,7 @@ function App() {
         const newIndex = (currentIndex + 1) % views.length;
         setCurrentView(views[newIndex]);
     };
+
     function checkBrowser(){
         // console.log(browser);
         if(browser === 'Firefox'){
@@ -81,10 +88,44 @@ function App() {
             return(
                 <div>
                     <div className="app-container">
-                        {currentView === 'staticColors' && <StaticColors MqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}} />}
-                        {currentView === 'pattern' && <Pattern mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
-                        {currentView === 'animations' && <Animations mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
-                        {currentView === 'custom' && <Custom mqttClient={{ client: mqttClient }} User={{ user:getClientId().toString()}}  />}
+                        <div className="tabs" aria-label="Views">
+                            {tabs.map((tab) => (
+                                <button
+                                    key={tab.id}
+                                    className="tab"
+                                    type="button"
+                                    role="tab"
+                                    id={tab.id}
+                                    aria-selected={currentView === tab.view}
+                                    aria-controls={`bt-panel-${tab.id.split('-')[2]}`}
+                                    tabIndex={currentView === tab.view ? 0 : -1}
+                                    onClick={() => setCurrentView(tab.view)}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </div>
+                        {tabs.map((tab) => {
+                            if (currentView !== tab.view) {
+                                return null;
+                            }
+
+                            const ActiveComponent = tab.component;
+                            const componentProps = {
+                                User: { user: getClientId().toString() },
+                                [tab.mqttProp]: { client: mqttClient }
+                            };
+                            return (
+                                <div
+                                    key={tab.view}
+                                    id={`bt-panel-${tab.id.split('-')[2]}`}
+                                    role="tabpanel"
+                                    aria-labelledby={tab.id}
+                                >
+                                    <ActiveComponent {...componentProps} />
+                                </div>
+                            );
+                        })}
 
                         <div className="arrow-container">
                             <button className="left-arrow" onClick={handleLeftArrowClick}>&larr;</button>
