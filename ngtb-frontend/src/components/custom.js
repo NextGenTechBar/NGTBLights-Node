@@ -266,57 +266,61 @@ const Custom = (props) => {
     return (
         //restyled this div because the default made it weird and squished and not scroll properly on mobile. There's still one problem -- the red extends too far (because paddingBottom), but if you remove that, you can't click the generate button cause it's behind the arrows div. If we can extend the blue scrollable region, that would fix it
         //<div className="static-colors-container">
-        <div style={{backgroundColor: '#b12a3b', padding: '20px', borderRadius: '10px', alignItems: 'center', justifyContent: 'center', display: 'flex', flexDirection: 'column', paddingBottom: '80px', width: '100%', boxSizing: 'border-box'}}>
+        <div className="custom-layout">
+            <div className="custom-container">
 
-            {/* Secret Commands Section */}
-        {/*<h2>Secret Commands!</h2>
-            <div style={{ backgroundColor: '#c1c6c8', borderRadius: '10px', padding: '7px', marginBottom: '0px' }}>
-                
-                <form onSubmit={(event) => ratelimit(event, document.getElementById('custom').value)}>
-                    <input type="text" id="custom" name="Custom" placeholder="Enter a secret code!" />
-                    <button type="submit" className='submit-button' style={{ display: 'block', marginTop: '10px' }}>
-                        Submit
-                    </button>
-                </form>
-            </div>
+                {/* Secret Commands Section */}
+            {/*<h2>Secret Commands!</h2>
+                <div style={{ backgroundColor: '#c1c6c8', borderRadius: '10px', padding: '7px', marginBottom: '0px' }}>
+                    
+                    <form onSubmit={(event) => ratelimit(event, document.getElementById('custom').value)}>
+                        <input type="text" id="custom" name="Custom" placeholder="Enter a secret code!" />
+                        <button type="submit" className='submit-button' style={{ display: 'block', marginTop: '10px' }}>
+                            Submit
+                        </button>
+                    </form>
+                </div>
 
 
-        <h2>-----</h2>*/}
+            <h2>-----</h2>*/}
 
-        <h2 style={{ textAlign: 'center' }}><u>Speak with the HemmTree Wizard!</u></h2>
-        <font color="white"><b>Set the color of the lights using AI!</b> <br></br><br></br>
-        1. Enter a color theme (ex: "ocean", "pickle", "autumn" etc).<br></br>
-        2. Wait ~15 seconds<br></br>
-        3. See the generated color scheme on the tree!
-        </font>
-        <br></br>
-            {/* Experimental Section */}
-            <div id="experimental-section" style={{ backgroundColor: '#c1c6c8', borderRadius: '12px', padding: '22px'}}>
-                
-                <form onSubmit={(event) => ratelimitExperimental(event, document.getElementById('ExperimentalField').value)}>
-                    <input
-                        type="text"
-                        id="ExperimentalField"
-                        name="Custom2"
-                        placeholder="Enter a color theme!"
-                        style={{ marginTop: '10px', width: '70%' }}
-                    />
-                    <button type="submit" className='submit-button' style={{ display: 'block', marginTop: '10px' }}>
-                        Generate
-                    </button>
-                </form>
+            <h2 style={{ textAlign: 'center' }}><u>Speak with the HemmTree Wizard!</u></h2>
+            <font color="white"><b>Set the color of the lights using AI!</b> <br></br><br></br>
+            1. Enter a color theme (ex: "ocean", "pickle", "autumn" etc).<br></br>
+            2. Wait ~15 seconds<br></br>
+            3. See the generated color scheme on the tree!
+            </font>
+            <br></br>
+                {/* Experimental Section */}
+                <div id="experimental-section" style={{ backgroundColor: '#c1c6c8', borderRadius: '12px', padding: '22px'}}>
+                    
+                    <form onSubmit={(event) => ratelimitExperimental(event, document.getElementById('ExperimentalField').value)}>
+                        <input
+                            type="text"
+                            id="ExperimentalField"
+                            name="Custom2"
+                            placeholder="Enter a color theme!"
+                            style={{ marginTop: '10px', width: '70%' }}
+                        />
+                        <button type="submit" className='submit-button' style={{ display: 'block', marginTop: '10px' }}>
+                            Generate
+                        </button>
+                    </form>
 
-                <div style={{ backgroundColor: '#c1c6c8', borderRadius: '12px', padding: '22px', marginTop: '10px' }}>
-                    <h3>Wizard's Tower:</h3>
-                    <Markdown id="GenieResponse" style={{ marginTop: '10px', color: 'black'}}>{genieResponse || 'The wizard is sleeping...'}</Markdown>
                 </div>
             </div>
-            
+
+            <div className="wizard-tower">
+                <h3>Wizard's Tower:</h3>
+                <Markdown id="GenieResponse" style={{ marginTop: '10px', color: 'black' }}>
+                    {genieResponse || 'The wizard is sleeping...'}
+                </Markdown>
+            </div>
 
             {/* Modal Alert */}
             <ModalAlert show={showModal} onClose={() => setShowModal(false)}>
                 <p>Please slow down! Spamming makes it no fun for anyone.</p>
-            <p>If you are using Experimental AI mode, please allow 15-30 seconds after pressing generate for the mode to be generated and displayed</p>
+                <p>If you are using Experimental AI mode, please allow 15-30 seconds after pressing generate for the mode to be generated and displayed</p>
             </ModalAlert>
         </div>
     );

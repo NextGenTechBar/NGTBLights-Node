@@ -28,8 +28,8 @@ function onConnect() {
     if(!connected){
         mqttClient = mqtt.connect(connectUrl, (clientId + Math.random  ().toString(16).slice(3)))
         connected = true;
-        console.log('Connected');
-        console.log(clientId);
+        //console.log('Connected');
+        //console.log(clientId);
     }
     
 }
@@ -87,45 +87,47 @@ function App() {
         else{   
             return(
                 <div>
-                    <div className="app-container">
-                        <div className="tabs" aria-label="Views">
-                            {tabs.map((tab) => (
-                                <button
-                                    key={tab.id}
-                                    className="tab"
-                                    type="button"
-                                    role="tab"
-                                    id={tab.id}
-                                    aria-selected={currentView === tab.view}
-                                    aria-controls={`bt-panel-${tab.id.split('-')[2]}`}
-                                    tabIndex={currentView === tab.view ? 0 : -1}
-                                    onClick={() => setCurrentView(tab.view)}
-                                >
-                                    {tab.label}
-                                </button>
-                            ))}
-                        </div>
-                        {tabs.map((tab) => {
-                            if (currentView !== tab.view) {
-                                return null;
-                            }
+                    <div className={`app-container ${currentView === 'custom' ? 'custom-active' : ''}`}>
+                        <div className="view-area">
+                            <div className="tabs" aria-label="Views">
+                                {tabs.map((tab) => (
+                                    <button
+                                        key={tab.id}
+                                        className="tab"
+                                        type="button"
+                                        role="tab"
+                                        id={tab.id}
+                                        aria-selected={currentView === tab.view}
+                                        aria-controls={`bt-panel-${tab.id.split('-')[2]}`}
+                                        tabIndex={currentView === tab.view ? 0 : -1}
+                                        onClick={() => setCurrentView(tab.view)}
+                                    >
+                                        {tab.label}
+                                    </button>
+                                ))}
+                            </div>
+                            {tabs.map((tab) => {
+                                if (currentView !== tab.view) {
+                                    return null;
+                                }
 
-                            const ActiveComponent = tab.component;
-                            const componentProps = {
-                                User: { user: getClientId().toString() },
-                                [tab.mqttProp]: { client: mqttClient }
-                            };
-                            return (
-                                <div
-                                    key={tab.view}
-                                    id={`bt-panel-${tab.id.split('-')[2]}`}
-                                    role="tabpanel"
-                                    aria-labelledby={tab.id}
-                                >
-                                    <ActiveComponent {...componentProps} />
-                                </div>
-                            );
-                        })}
+                                const ActiveComponent = tab.component;
+                                const componentProps = {
+                                    User: { user: getClientId().toString() },
+                                    [tab.mqttProp]: { client: mqttClient }
+                                };
+                                return (
+                                    <div
+                                        key={tab.view}
+                                        id={`bt-panel-${tab.id.split('-')[2]}`}
+                                        role="tabpanel"
+                                        aria-labelledby={tab.id}
+                                    >
+                                        <ActiveComponent {...componentProps} />
+                                    </div>
+                                );
+                            })}
+                        </div>
 
                         <div className="arrow-container">
                             <button className="left-arrow" onClick={handleLeftArrowClick}>&larr;</button>

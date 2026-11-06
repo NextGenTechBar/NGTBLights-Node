@@ -53,7 +53,6 @@ app.post("/api/genie", async (req, res) => {
 
     return res.status(202).json({ accepted: true, jobId });
   } catch (error) {
-    console.error("Unable to send request to Workato:", error);
     return res.status(502).json({ error: "Unable to contact Workato" });
   }
 });
@@ -65,8 +64,6 @@ app.post("/api/genie", async (req, res) => {
  * References: Currently linked to REC | NGTBLights | HTTP Sender. Line 3 sends JSON {jobId, response} to this post route. 
  */
 app.post("/api/agent-callback", (req, res) => {
-  console.log("Workato callback received:", req.body);
-
   let callback = req.body;
 
   if (!callback) {
@@ -82,7 +79,6 @@ app.post("/api/agent-callback", (req, res) => {
   }
 
   const { jobId, response } = callback;
-  console.log("Parsed callback:", { jobId, response });
 
   if (!jobId) {
     return res.status(400).json({ error: "jobId is required" });
@@ -103,15 +99,12 @@ app.post("/api/agent-callback", (req, res) => {
  * References: Not currently used by any part of the application.
  */
 app.get("/api/jobs/:jobId", (req, res) => {
-  console.log("Job requested:", req.params.jobId);
   const job = jobs.get(req.params.jobId);
 
   if (!job) {
-    console.log("Job not found:", req.params.jobId);
     return res.status(404).json({ error: "Job not found" });
   }
 
-  console.log("Returning job:", job);
   res.json(job);
 });
 

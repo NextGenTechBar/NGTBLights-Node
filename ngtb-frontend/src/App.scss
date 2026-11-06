@@ -226,8 +226,15 @@ button[type="submit"]:active {
     font-weight: 700;
     padding: 11px 20px 13px;
     border-radius: 12px 12px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex: 1 1 0;
+    min-width: 0;
     cursor: pointer;
     transition: background-color .15s;
+    
 }
 
 .tabs .tab:hover {
@@ -249,6 +256,8 @@ button[type="submit"]:active {
     font-size: .88rem;
     line-height: 1.7;
     color: var(--bt-muted);
+    position: absolute;
+    left: 0;
 }
 
 .tabs .tab:focus-visible {
@@ -271,6 +280,21 @@ button[type="submit"]:active {
     .tabs .tab {
         transition: none;
     }
+}
+
+//Set tab text to abbreviated form on small screens
+@media (max-width: 360px) {
+  .tabs .tab {
+    font-size: 0.75rem;
+    padding: 8px 12px 10px;
+  }
+}
+
+@media (min-width: 361px) and (max-width: 550px) {
+  .tabs .tab {
+    font-size: 0.85rem;
+    padding: 10px 16px 12px;
+  }
 }
 
 
@@ -317,4 +341,93 @@ button {
 .app-container > [role="tabpanel"] {
     width: 100%;
     max-width: 560px;
+}
+
+.view-area {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+}
+
+.view-area > [role="tabpanel"] {
+    width: 100%;
+}
+
+
+.custom-layout {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    align-items: flex-start;
+    overflow-x: hidden;
+}
+
+.custom-container {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.wizard-tower {
+    flex: 1 1 0;
+    min-width: 0;
+    background-color: $grey;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Large screens: side-by-side */
+@media (min-width: 701px) {
+    .custom-active .view-area {
+        max-width: none;
+    }
+
+    .custom-active .view-area > [role="tabpanel"] {
+        padding-top: 60px;
+        max-width: none;
+    }
+
+    .custom-layout {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-height: calc(100vh - 180px);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    .custom-active .tabs {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+        width: calc(50% - 10px);
+        max-width: none;
+        transform: translateY(0);
+    }
+}
+
+/* Small screens: stacked and scrollable */
+@media (max-width: 700px) {
+    .custom-layout {
+        flex-direction: column;
+        max-height: calc(100dvh - 180px);
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-bottom: 20px;
+    }
+
+    .view-area {
+        max-width: 560px;
+    }
+
+    .custom-container,
+    .wizard-tower {
+        width: 100%;
+        flex: none;
+    }
+
+    .custom-active .tabs {
+        position: static;
+    }
 }
