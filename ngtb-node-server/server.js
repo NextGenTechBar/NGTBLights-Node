@@ -4,15 +4,18 @@ const path = require('path');
 const express = require('express'); // import express
 const https = require('https');
 const cors = require('cors'); // import cors
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const app = express(); // creating an express app
 const fs = require('fs');
 const morgan = require('morgan'); //logging that Tyler wanted to implement to see unwanted connections
 //const PORT = 8080; // setting the port, default to 3000 if not specified
 const PORT = 443; 
+const jobs = new Map();
+const workatoWebhookUrl = process.env.WORKATO_WEBHOOK_URL;
 
 console.log('Starting');
 app.use(cors()); // enable CORS for all routes
-
+app.use(express.json()); // parse JSON request bodies
 app.use(morgan('combined'));
 
 
@@ -116,7 +119,7 @@ app.get('*', (req, res) => {
 //    res.status(200).send('Hello, world!');
 //});
 
-const privateKey =fs.readFileSync('certs/ngtblights.gonzaga.edu.key');
+const privateKey = fs.readFileSync('certs/ngtblights.gonzaga.edu.key');
 const certificate = fs.readFileSync('certs/ngtblights.gonzaga.edu.chain.crt');
 
 

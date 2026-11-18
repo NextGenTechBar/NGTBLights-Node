@@ -18,6 +18,7 @@ const Animations = (props) => {
             clickTimestamps.current = [];
         }
     }, [clickCount]);
+
     const animations = [
         'DYNAMrainbow',
         'DYNAMchase',
@@ -41,6 +42,7 @@ const Animations = (props) => {
         'url(./twinklemod.gif)',
 	'url(./slide.gif)'
     ];
+
     const labels = [
         'Rainbow Zoom', 
         'Color Chase',
@@ -52,6 +54,7 @@ const Animations = (props) => {
         'Shimmer',
 	'Slide'
     ];
+
     const handleClick = (animations, index) => {
         console.log(`Button ${index + 1} with color ${animations} clicked`);
 
@@ -88,7 +91,7 @@ const Animations = (props) => {
         <div key={index} className="animation-button-container">
             <button
                 key={index} 
-                className="animation-button" 
+                className="animation-button tile" 
                 style={{ backgroundImage: images[index] }}
                 onClick={() => ratelimit(animations, index)}
             >
@@ -101,7 +104,9 @@ const Animations = (props) => {
     
     return (
         <div className="static-colors-container">
-            <h1>Animations!</h1>
+            <div className="panel-header">
+                <h2>Apply animations to the current color scheme!</h2>
+            </div>
             <div className="grid-container">
                 {buttons}
             </div>

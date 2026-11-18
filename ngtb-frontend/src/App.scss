@@ -31,7 +31,13 @@ $gradient-bottom-left: linear-gradient(315deg, #b12a3bff, #132f5fff, #ffffffff, 
 $gradient-radial: radial-gradient(#b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f68e5fff);
 
 /* styles.scss */
-
+.header {
+    padding: 20px;
+    text-align: center;
+    color: $white;
+    width: 100%;
+    font-style: italic;
+}
 
 
 /* App container styles */
@@ -68,6 +74,11 @@ $gradient-radial: radial-gradient(#b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f
     cursor: pointer;
 }
 
+.panel-header {
+    text-align: center;
+    color: $white;
+}
+
 button.close-button {
     color: $white;
 }
@@ -87,16 +98,20 @@ button.close-button {
 
 /* Static colors container styles */
 .static-colors-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: $cardinal;
-    padding: 20px;
-    border-radius: 10px;
-    width: 100%;
-    max-height: calc(100vh - 100px); /* Adjust to leave space for arrows */
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(
+    145deg,
+    #b12a3b,
+    #8f2334
+  );
+  padding: 20px;
+  border-radius: 0 0 10px 10px;
+  width: 100%;
+  max-height: calc(100vh - 100px); /* Adjust to leave space for arrows */
+  box-sizing: border-box;
 }
 
 .grid-container {
@@ -105,17 +120,13 @@ button.close-button {
     // gap: 5px;
     // width: 100%;
     border-radius: 4px;
-    background-color: $grey;
-    max-height: calc(100vh - 100px); /* Adjust to leave space for arrows */
-    overflow-y: auto; /* Allow vertical scrolling if needed */
+    color: $white;
     overflow-x: hidden; /* Prevent horizontal scrolling */
     box-sizing: border-box;
 }
 .grid-container input [type="text"] {
     border-radius: 4px;
     background-color: $grey;
-    max-height: calc(100vh - 100px); /* Adjust to leave space for arrows */
-    overflow-y: auto; /* Allow vertical scrolling if needed */
     overflow-x: hidden; /* Prevent horizontal scrolling */
     box-sizing: border-box;
     display: block;
@@ -126,17 +137,16 @@ button.close-button {
     margin-top: 10px;
 }
 
-/* Custom container styles */
-.custom-container {
+/* wizard container styles */
+.wizard-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: $cardinal;
-    padding: 20px;
-    border-radius: 10px;
+    padding: 0;
+    border-radius: 0 0 10px 10px;
     width: 100%;
-    max-height: calc(100vh - 100px); /* Adjust to leave space for arrows */
     box-sizing: border-box;
 }
 
@@ -146,6 +156,72 @@ button.close-button {
     justify-content: center;
     align-items: center;
     width: 100%;
+}
+
+.example-command {
+    width: 140px;
+    max-width: none;
+    min-height: 58px;
+    padding: 10px 20px;
+    border: 2px solid rgba(255, 255, 255, 0.65);
+    border-radius: 12px;
+    color: $white;
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    background-size: 180% 180%;
+    background-position: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.example-commands {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.example-commands-label {
+    flex-basis: 100%;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+#ocean-button {
+    background-image:
+        radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.7), transparent 18%),
+        linear-gradient(160deg, #8ee7f5 0%, #147ca1 48%, #062c59 100%);
+    text-shadow: 0 1px 3px #062c59;
+}
+
+#sunset-button {
+    background-image:
+        radial-gradient(circle at 70% 22%, rgba(255, 214, 137, 0.9), transparent 20%),
+        linear-gradient(155deg, #ffdb70 0%, #f47b4e 48%, #8d214b 100%);
+    text-shadow: 0 1px 3px #6d173b;
+}
+
+#seahawks-button {
+    background-image:
+        linear-gradient(135deg, #0b315f 0%, #167f72 48%, #69be28 49%, #173d2b 100%);
+    text-shadow: 0 1px 3px #09233f;
+}
+
+.example-command:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.example-command:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.example-command:focus-visible {
+    outline: 3px solid $white;
+    outline-offset: 3px;
 }
 
 form {
@@ -185,15 +261,35 @@ button[type="submit"]:active {
 }
 .label {
     margin-top: 5px;
-    color: black;
-    font-size: 14px;
+    font-size: 16px;
     margin: 1px;
     text-align: center;
 }
 
+.tile {
+    border: 2px solid rgba(255, 255, 255, 0.65);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
 
+.tile:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
 
+.tile:active {
+    transform: translateY(0) scale(0.98);
+}
 
+.tile:focus-visible {
+    outline: 3px solid $white;
+    outline-offset: 3px;
+}
+
+.tile.is-selected {
+  box-shadow:
+    0 0 0 3px white,
+    0 0 24px var(--tile-color);
+}
 
 /* Boxed tabs: the selected tab shares the panel's background and border, and a 1px offset fuses the two. */
 .tabs {
@@ -206,11 +302,9 @@ button[type="submit"]:active {
     box-sizing: border-box;
     width: 100%;
     max-width: 560px;
-    height: 20%;
-    color: var(--bt-text);
+    padding: 0;
     display: flex;
     gap: 6px;
-    padding: 0 10px;
 }
 
 .tabs .tab {
@@ -219,12 +313,12 @@ button[type="submit"]:active {
     margin: 0;
     border: 1px solid transparent;
     border-bottom: 0;
-    background: var(--bt-tab);
+    background: $grey;
     color: var(--bt-muted);
     font: inherit;
     font-size: .87rem;
     font-weight: 700;
-    padding: 11px 20px 13px;
+    padding:  20px 13px;
     border-radius: 12px 12px 0 0;
     display: flex;
     align-items: center;
@@ -300,14 +394,21 @@ button[type="submit"]:active {
 
 /* General styles */
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    background:
+        radial-gradient(circle at 20% 10%, rgba(177, 42, 59, 0.3), transparent 35%),
+        linear-gradient(135deg, #0d2145, #132f5f 60%, #182b4f);
+    display: block;
+    min-height: 100dvh;
+    height: auto;
     margin: 0;
     background: $delft-blue;
-    align-items: flex-start;
-    padding-top: 50px;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+#root {
+    width: 100%;
+    min-height: 100dvh;
 }
 
 h1, h2 {
@@ -354,17 +455,19 @@ button {
 }
 
 
-.custom-layout {
+.wizard-layout {
     display: flex;
     gap: 20px;
     width: 100%;
     align-items: flex-start;
     overflow-x: hidden;
+    overflow-y: visible;
 }
 
-.custom-container {
+.wizard-container {
     flex: 1 1 0;
     min-width: 0;
+    border-radius: 0 0 10px 10px;
 }
 
 .wizard-tower {
@@ -375,45 +478,122 @@ button {
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    border-radius: 0 0 10px 10px;
+    overflow-wrap: anywhere; /* Ensure long words break to prevent overflow */
+}
+
+.example-commands {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 10px;
+    color: $white;
+}
+
+.tile.is-selected {
+    box-shadow:
+        0 0 0 3px $white,
+        0 0 24px var(--tile-color);
+}
+
+.App {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 100dvh;
+}
+
+.header {
+    flex: 0 0 auto;
+    width: 100%;
+    text-align: center;
+    margin: 0;
+    padding: 16px 16px 8px;
+    color: $white;
+    height: auto;
+    box-sizing: border-box;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.app-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    max-height: none;
+    width: min(90vw, 560px);
+    margin: 0 auto;
+    padding: 0 0 24px;
+    justify-content: flex-start;
+}
+
+.static-colors-container {
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+}
+
+.static-colors-container .grid-container {
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
 }
 
 /* Large screens: side-by-side */
-@media (min-width: 701px) {
-    .custom-active .view-area {
-        max-width: none;
+@media (min-width: 1140px) {
+    .wizard-active.app-container {
+        width: 1140px;
     }
 
-    .custom-active .view-area > [role="tabpanel"] {
-        padding-top: 60px;
-        max-width: none;
+    .wizard-active .view-area {
+        width: 1140px;
+        max-width: 1140px;
     }
 
-    .custom-layout {
+    .wizard-active .view-area > [role="tabpanel"] {
+        padding-top: 0;
+        margin-top: 0;
+        width: 1140px;
+        max-width: 1140px;
+    }
+
+    .wizard-layout {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        max-height: calc(100vh - 180px);
-        overflow-y: auto;
-        overflow-x: hidden;
+        grid-template-columns: 560px 560px;
+        gap: 20px;
+        width: 1140px;
+        overflow: visible;
     }
 
-    .custom-active .tabs {
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 2;
-        width: calc(50% - 10px);
-        max-width: none;
-        transform: translateY(0);
+    .wizard-active .tabs {
+        position: static;
+        width: 560px;
+        max-width: 560px;
+    }
+
+    .wizard-active .wizard-container,
+    .wizard-active .wizard-tower {
+        width: 560px;
+        max-width: 560px;
+    }
+
+    .wizard-tower {
+        min-height: 100%;
     }
 }
 
 /* Small screens: stacked and scrollable */
-@media (max-width: 700px) {
-    .custom-layout {
+@media (max-width: 1139px) {
+    .wizard-layout {
         flex-direction: column;
-        max-height: calc(100dvh - 180px);
-        overflow-y: auto;
-        overflow-x: hidden;
+        overflow: visible;
         padding-bottom: 20px;
     }
 
@@ -421,13 +601,22 @@ button {
         max-width: 560px;
     }
 
-    .custom-container,
+    .wizard-container,
     .wizard-tower {
         width: 100%;
         flex: none;
     }
 
-    .custom-active .tabs {
+    .wizard-tower {
+        max-height: none;
+        overflow: visible;
+    }
+
+    .wizard-active .tabs {
         position: static;
+    }
+
+    .example-commands {
+        width: 100%;
     }
 }

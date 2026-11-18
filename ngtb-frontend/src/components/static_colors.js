@@ -63,7 +63,7 @@ const StaticColors = (props) => {
     const buttons = colors.map((color, index) => (
         <button
             key={index} 
-            className="color-button" 
+            className="color-button tile" 
             style={{ backgroundColor: color }} 
             onClick={() => ratelimit(color, index)}
         >
@@ -90,7 +90,9 @@ const StaticColors = (props) => {
     }
     return (
         <div className="static-colors-container">
-            <h1>Colors</h1>
+            <div className="panel-header">
+                <h2>Click a color to change the tree!</h2>
+            </div>
             <div className="grid-container">
                 {buttons}
             </div>

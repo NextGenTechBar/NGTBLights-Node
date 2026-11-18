@@ -8,117 +8,123 @@
 
 const express = require("express");
 
+const path = require("path");
 const cors = require("cors");
+require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 const app = express();
 //Use alternate port as 3000 is used by the React frontend
-const port = Number(process.env.PORT) || 3001;
-const workatoWebhookUrl = "https://webhooks.workato.com/webhooks/rest/9aff14d4-3289-42d9-91b4-db436e64bf06/hemmtreewizard-webhook";
+const port = 3001;
+const workatoWebhookUrl = process.env.WORKATO_WEBHOOK_URL;
+const WORKATO_BASE = "https://genie-api.workato.com/api/v1";
 const jobs = new Map();
+const maxLoggedErrorLength = 500;
+
+function loggableErrorBody(body) {
+  return body.length > maxLoggedErrorLength
+    ? `${body.slice(0, maxLoggedErrorLength)}...`
+    : body;
+}
 
 app.use(cors({ origin: "http://localhost:3000" }));
 app.use(express.json());
 
 console.log(`Server is running on http://localhost:${port}`);
+console.log("Environment configuration:", {
+  workatoWebhookUrl: Boolean(workatoWebhookUrl),
+  workatoApiKey: Boolean(process.env.WORKATO_API_KEY),
+  workatoUserId: Boolean(process.env.WORKATO_USER_ID),
+  genieHandle: Boolean(process.env.GENIE_HANDLE)
+});
 
 app.use(express.static(__dirname));
-// Workato may send either a JSON object or a plain-text result.
-app.use("/api/agent-callback", express.text({ type: "*/*" }));
 
-/**
- * Endpoint for sending requests to Workato and receiving asynchronous responses.
- * @param {object} req - The Express request object containing the text and jobId.
- * @param {object} res - The Express response object used to send a response back to the client.
- * References: Currently posted to by sendWebhook in ngtb-frontend/src/components/custom.js upon clicking of submit button
-   in experimental field.
- */
-app.post("/api/genie", async (req, res) => {
-  if (!workatoWebhookUrl) {
-    return res.status(500).json({ error: "WORKATO_WEBHOOK_URL is not configured" });
-  }
 
-  const { text, jobId } = req.body;
-
-  if (!text || !jobId) {
-    return res.status(400).json({ error: "text and jobId are required" });
-  }
-
+app.post("/api/generate-conversation", async (req, res) => {
   try {
-    const response = await fetch(workatoWebhookUrl, {
+    const { theme } = req.body;
+
+    if (!theme || typeof theme !== "string" || theme.length > 200) {
+      return res.status(400).json({ error: "Invalid theme" });
+    }
+
+    const headers = {
+      "Authorization": `Bearer ${process.env.WORKATO_API_KEY}`,
+      "X-IDP-User-ID": process.env.WORKATO_USER_ID,
+      "Content-Type": "application/json"
+    };
+
+
+    // Create a new conversation
+    const conversationResponse = await fetch(`${WORKATO_BASE}/genies/${process.env.GENIE_HANDLE}/chat/conversations`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ text, jobId })
+      headers
     });
 
-    if (!response.ok) {
-      return res.status(502).json({
-        error: `Workato returned ${response.status}`
+    if (!conversationResponse.ok) {
+      const errorText = await conversationResponse.text();
+      console.error("Workato conversation creation failed:", {
+        status: conversationResponse.status,
+        body: loggableErrorBody(errorText),
+        credentials: {
+          workatoApiKey: Boolean(process.env.WORKATO_API_KEY),
+          workatoUserId: Boolean(process.env.WORKATO_USER_ID),
+          genieHandle: Boolean(process.env.GENIE_HANDLE)
+        }
       });
+      return res.status(conversationResponse.status).json({ error: `Failed to create conversation: ${errorText}` });
     }
 
-    return res.status(202).json({ accepted: true, jobId });
-  } catch (error) {
-    console.error("Unable to send request to Workato:", error);
-    return res.status(502).json({ error: "Unable to contact Workato" });
-  }
-});
+    const { conversation_id: conversationId } = await conversationResponse.json();
+    console.log("Workato conversation created:", { conversationId });
 
-/**
- * Endpoint for handling callbacks from Workato. Expects a JSON object or plain-text result containing a jobId and response.
- * @param {object} req - The Express request object containing the callback data from Workato.
- * @param {object} res - The Express response object used to send a response back to Workato.
- * References: Currently linked to REC | NGTBLights | HTTP Sender. Line 3 sends JSON {jobId, response} to this post route. 
- */
-app.post("/api/agent-callback", (req, res) => {
-  console.log("Workato callback received:", req.body);
+    // Send theme to the conversation
+    const messageResponse = await fetch(`${WORKATO_BASE}/genies/${process.env.GENIE_HANDLE}/chat/conversations/${conversationId}/messages`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ message: theme, stream: true })
+    });
 
-  let callback = req.body;
+    if (!messageResponse.ok) {
+      const errorText = await messageResponse.text();
+      console.error("Workato message request failed:", {
+        status: messageResponse.status,
+        body: loggableErrorBody(errorText),
+        conversationId
+      });
+      return res.status(messageResponse.status).json({ error: `Failed to send theme: ${errorText}` });
+    }
 
-  if (!callback) {
-    return res.status(400).json({ error: "Callback body is required" });
-  }
+    console.log("Workato message stream opened:", { conversationId });
 
-  if (typeof callback === "string") {
+    // Forward the streaming response to the client
+    res.status(200);
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache, no-transform");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders();
+
+    const reader = messageResponse.body.getReader();
+
     try {
-      callback = JSON.parse(callback);
-    } catch {
-      callback = { result: callback };
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        res.write(value);
+      }
+    } finally {
+      reader.releaseLock();
+      res.end();
+      console.log("Workato message stream closed:", { conversationId });
+    }
+  } catch (error) {
+    console.error("Error in /api/generate-conversation:", error);
+
+    if (!res.headersSent) {
+      res.status(500).json({ error: "Internal Server Error" });
+    } else {
+      res.end();
     }
   }
-
-  const { jobId, response } = callback;
-  console.log("Parsed callback:", { jobId, response });
-
-  if (!jobId) {
-    return res.status(400).json({ error: "jobId is required" });
-  }
-
-  jobs.set(jobId, {
-    status: "complete",
-    result: response ?? callback
-  });
-
-  res.json({ ok: true });
-});
-
-/**
- * Endpoint for retrieving the status and result of a previously submitted job.
- * @param {object} req - The Express request object containing the jobId as a URL parameter.
- * @param {object} res - The Express response object used to send the job status and result back to the client.
- * References: Not currently used by any part of the application.
- */
-app.get("/api/jobs/:jobId", (req, res) => {
-  console.log("Job requested:", req.params.jobId);
-  const job = jobs.get(req.params.jobId);
-
-  if (!job) {
-    console.log("Job not found:", req.params.jobId);
-    return res.status(404).json({ error: "Job not found" });
-  }
-
-  console.log("Returning job:", job);
-  res.json(job);
 });
 
 app.listen(port, () => {

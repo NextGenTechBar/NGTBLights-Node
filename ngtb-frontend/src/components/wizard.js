@@ -2,10 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import Markdown from 'react-markdown';
 // import './styles/patterns.scss'; // Make sure to create and style this CSS file
 import '../App.scss';
-import './styles/custom-container.scss'; // Import the custom styles for the Custom component
 import ModalAlert from './ModalAlert.js'
 
-const Custom = (props) => {
+const Wizard = (props) => {
     const { client } = props.mqttClient;
     const [showModal, setShowModal] = useState(false);
     const [clickCount, setClickCount] = useState(0);
@@ -20,6 +19,8 @@ const Custom = (props) => {
             clickTimestamps.current = [];
         }
     }, [clickCount]);
+
+    //Deprecated click function for secret codes.
     const handleClick = (event, mode) => {
         event.preventDefault(); // Prevent the form from submitting and reloading the page
 
@@ -112,8 +113,7 @@ const Custom = (props) => {
     };
 
 
-
-    const handleClickExperimental = (event, mode) => {
+    const handleClickExperimental = async (event, mode) => {
         event.preventDefault(); // Prevent the form from submitting and reloading the page
 
         var colorToSend = '';
@@ -127,8 +127,13 @@ const Custom = (props) => {
         //var options = { retain: true };
         //console.log(colorToSend);
         //client.publish('GUHemmTree', colorToSend, options);
-        client.publish('GUHemmTreeStats', "AI- "+mode + "," + props.User.user);
-	    sendWebhook(mode);
+        client.publish('GUHemmTreeStats', "AI- "+ mode + "," + props.User.user);
+        
+        try {
+            await generateTheme(mode);
+        } catch (error) {
+            document.getElementById('GenieResponse').innerText = "Error generating theme. Please try again.";
+        }
 
         console.log('Message sent');
     };
@@ -222,6 +227,50 @@ const Custom = (props) => {
         setGenieResponse("The wizard's spell failed :(");
     }
 
+    /**
+     * Wait 30 seconds for response from the backend before timing out. Upon getting a response, it updates the UI with the result.
+     * @param {*} theme - The theme to generate a conversation for.
+     * References: Called by sendWebhook function after sending a request to the backend (apiURL is GET /api/generate-conversation).
+     */
+    async function generateTheme(theme) {
+        const response = await fetch('/api/generate-conversation', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ theme })
+        });
+
+        if (!response.ok) {
+            console.error("Error generating theme:", response.status);
+            return;
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let result = "";
+
+        while (true) {
+            const { value, done } = await reader.read();
+
+            if (done) {
+                break;
+            }
+
+            const chunk = decoder.decode(value, { stream: true });
+            result += chunk;
+
+            document.getElementById('GenieResponse').innerText = result;
+        }
+
+        result += decoder.decode();
+
+        return result;
+    }
+
+    /**
+     * Toggles the disabled state of the submit button in the Experimental AI section.
+     */
     function toggleSubmit() {
         const submitButton = document.querySelector('.submit-button');
         if (submitButton) {
@@ -229,7 +278,16 @@ const Custom = (props) => {
         }
     }
 
-    const ratelimit = (color, index) => {
+    /**
+     * DEPRECATED
+     * Rate limits the button clicks to prevent spamming. If the user clicks too many times in a short period, it shows a modal alert.
+     * It increments the click count and sets a timer to reset the count after 1 second.
+     * If the click count exceeds 5, it shows a modal alert and resets the count.
+     * @param {*} color 
+     * @param {*} index 
+     * References: Called by the onSubmit event of the form in the secret code section.
+     */
+    const ratelimit = (event, mode) => {
         if (timer) {
             clearInterval(timer);
         }
@@ -243,10 +301,18 @@ const Custom = (props) => {
 
         setTimer(newTimer);
 
-        handleClick(color, index);
+        handleClick(event, mode);
     };
     
-    const ratelimitExperimental = (color, index) => {
+    /**
+     * Rate limits the button clicks to prevent spamming. If the user clicks too many times in a short period, it shows a modal alert.
+     * It increments the click count and sets a timer to reset the count after 1 second.
+     * If the click count exceeds 5, it shows a modal alert and resets the count.
+     * @param {*} color
+     * @param {*} index 
+     * References: Called by the onSubmit event of the form in the Experimental AI section.
+     */
+    const ratelimitExperimental = (event, theme) => {
         if (timer) {
             clearInterval(timer);
         }
@@ -260,14 +326,14 @@ const Custom = (props) => {
 
         setTimer(newTimer);
 
-        handleClickExperimental(color, index);
+        handleClickExperimental(event, theme);
     };
 
     return (
         //restyled this div because the default made it weird and squished and not scroll properly on mobile. There's still one problem -- the red extends too far (because paddingBottom), but if you remove that, you can't click the generate button cause it's behind the arrows div. If we can extend the blue scrollable region, that would fix it
         //<div className="static-colors-container">
-        <div className="custom-layout">
-            <div className="custom-container">
+        <div className="wizard-layout">
+            <div className="wizard-container">
 
                 {/* Secret Commands Section */}
             {/*<h2>Secret Commands!</h2>
@@ -285,24 +351,30 @@ const Custom = (props) => {
             <h2>-----</h2>*/}
 
             <h2 style={{ textAlign: 'center' }}><u>Speak with the HemmTree Wizard!</u></h2>
-            <font color="white"><b>Set the color of the lights using AI!</b> <br></br><br></br>
-            1. Enter a color theme (ex: "ocean", "pickle", "autumn" etc).<br></br>
-            2. Wait ~15 seconds<br></br>
-            3. See the generated color scheme on the tree!
+            <font color="white" style={{ textAlign: 'center' }}>
+                <b>Set the color of the lights using AI! (allow 15-30 seconds for theme to take effect)</b>
+                <br></br>
             </font>
-            <br></br>
+            
                 {/* Experimental Section */}
-                <div id="experimental-section" style={{ backgroundColor: '#c1c6c8', borderRadius: '12px', padding: '22px'}}>
-                    
+                <div id="experimental-section" style={{borderRadius: '12px', padding: '22px'}}>
+                    <div className="example-commands">
+                        <div className="example-commands-label">Example Commands:</div>
+                        <button id="ocean-button" className="example-command" onClick={(event) => ratelimitExperimental(event, 'ocean')}>Ocean</button>
+                        <button id="sunset-button" className="example-command" onClick={(event) => ratelimitExperimental(event, 'sunset')}>Sunset</button>
+                        <button id="seahawks-button" className="example-command" onClick={(event) => ratelimitExperimental(event, 'seahawks')}>Seahawks</button>
+                    </div>
                     <form onSubmit={(event) => ratelimitExperimental(event, document.getElementById('ExperimentalField').value)}>
                         <input
                             type="text"
                             id="ExperimentalField"
                             name="Custom2"
                             placeholder="Enter a color theme!"
+                            maxLength={50}
+                            minLength={1}
                             style={{ marginTop: '10px', width: '70%' }}
                         />
-                        <button type="submit" className='submit-button' style={{ display: 'block', marginTop: '10px' }}>
+                        <button type="submit" className='submit-button tile' style={{ display: 'block', marginTop: '10px', backgroundColor: '#c1c6c8', color: 'black', fontWeight: 'bold' }}>
                             Generate
                         </button>
                     </form>
@@ -329,4 +401,4 @@ const Custom = (props) => {
 
 };
 
-export default Custom;
+export default Wizard;

@@ -2,7 +2,7 @@ import React, { useEffect,useState} from 'react';
 import Pattern from './components/patterns';
 import StaticColors from './components/static_colors';
 import Animations from './components/animations';
-import Custom from './components/custom';
+import Wizard from './components/wizard';
 import './App.scss';
 import mqtt from 'mqtt';
 import Cookies from 'js-cookie';
@@ -14,6 +14,8 @@ const path = '/mqtt';
 const connectUrl = `${protocol}://${host}:${port}${path}`;
 var connected = false;
 var mqttClient = null;
+
+
 
 const getClientId = () => {
     let clientId = Cookies.get('mqttClientId');
@@ -43,7 +45,7 @@ function App() {
         { id: 'bt-tab-0', label: 'Colors', view: 'staticColors', component: StaticColors, mqttProp: 'MqttClient' },
         { id: 'bt-tab-1', label: 'Patterns', view: 'pattern', component: Pattern, mqttProp: 'mqttClient' },
         { id: 'bt-tab-2', label: 'Animations', view: 'animations', component: Animations, mqttProp: 'mqttClient' },
-        { id: 'bt-tab-3', label: 'Custom', view: 'custom', component: Custom, mqttProp: 'mqttClient' }
+        { id: 'bt-tab-3', label: 'Wizard', view: 'wizard', component: Wizard, mqttProp: 'mqttClient' }
     ];
     const views = tabs.map((tab) => tab.view);
     const [browser, setBrowser] = useState('');
@@ -63,17 +65,6 @@ function App() {
         setBrowser('Other');
       }
     }, []);
-    const handleLeftArrowClick = () => {
-        const currentIndex = views.indexOf(currentView);
-        const newIndex = (currentIndex - 1 + views.length) % views.length;
-        setCurrentView(views[newIndex]);
-    };
-
-    const handleRightArrowClick = () => {
-        const currentIndex = views.indexOf(currentView);
-        const newIndex = (currentIndex + 1) % views.length;
-        setCurrentView(views[newIndex]);
-    };
 
     function checkBrowser(){
         // console.log(browser);
@@ -86,8 +77,13 @@ function App() {
         }
         else{   
             return(
-                <div>
-                    <div className={`app-container ${currentView === 'custom' ? 'custom-active' : ''}`}>
+                <div className="App">
+                    <div className="header">
+                        <h1>HemmTree Lights App</h1>
+                    </div>
+
+
+                    <div className={`app-container ${currentView === 'wizard' ? 'wizard-active' : ''}`}>
                         <div className="view-area">
                             <div className="tabs" aria-label="Views">
                                 {tabs.map((tab) => (
@@ -129,10 +125,6 @@ function App() {
                             })}
                         </div>
 
-                        <div className="arrow-container">
-                            <button className="left-arrow" onClick={handleLeftArrowClick}>&larr;</button>
-                            <button className="right-arrow" onClick={handleRightArrowClick}>&rarr;</button>
-                        </div>
                     </div>
                 </div>
             );
@@ -144,5 +136,14 @@ function App() {
         checkBrowser()
     );
 }
+
+
+const tiles = document.querySelectorAll('.tile');
+tiles.forEach(tile => {
+    tile.addEventListener('click', () => {
+        tiles.forEach(t => t.classList.remove('is-selected'));
+        tile.classList.add('is-selected');
+    });
+});
 
 export default App;
