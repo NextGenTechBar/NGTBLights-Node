@@ -190,7 +190,7 @@ button.close-button {
     text-align: center;
 }
 
-#ocean-button {
+#beach-button {
     background-image:
         radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.7), transparent 18%),
         linear-gradient(160deg, #8ee7f5 0%, #147ca1 48%, #062c59 100%);
@@ -238,6 +238,18 @@ input[type="text"] {
     border-radius: 5px;
     border: 1px solid #ccc;
     font-size: 16px;
+}
+
+input[type="text"]:disabled {
+    opacity: 1;
+    background-color: #fff;
+    color: #212529;
+    border-color: #ccc;
+}
+
+input[type="text"]:disabled::placeholder {
+    color: #6c757d;
+    opacity: 1;
 }
 
 button[type="submit"] {
@@ -484,6 +496,64 @@ button {
     overflow-wrap: anywhere; /* Ensure long words break to prevent overflow */
 }
 
+.wizard-tower-header {
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 112px;
+}
+
+.wizard-tower-header h3 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+}
+
+.wizard-avatar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 112px;
+    height: 112px;
+    flex: 0 0 auto;
+    object-fit: cover;
+    object-position: center;
+    border: 3px solid $white;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+.follow-response {
+    box-sizing: border-box;
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(280px, calc(100vw - 32px));
+    padding: 12px 20px;
+    border: 2px solid $white;
+    border-radius: 999px;
+    background-color: $delft-blue;
+    color: $white;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+.follow-response:hover {
+    background-color: $cardinal;
+}
+
 .example-commands {
     display: flex;
     flex-wrap: wrap;
@@ -591,6 +661,15 @@ button {
 
 /* Small screens: stacked and scrollable */
 @media (max-width: 1139px) {
+    .wizard-tower-header {
+        min-height: 72px;
+    }
+
+    .wizard-avatar {
+        width: 72px;
+        height: 72px;
+    }
+
     .wizard-layout {
         flex-direction: column;
         overflow: visible;

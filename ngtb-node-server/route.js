@@ -55,7 +55,7 @@ app.post("/api/generate-conversation", async (req, res) => {
 
 
     // Create a new conversation
-    const conversationResponse = await fetch(`${WORKATO_BASE}/genies/${process.env.GENIE_HANDLE}/chat/conversations`, {
+    const conversationResponse = await fetch(`${WORKATO_BASE}/genies/${encodeURIComponent(process.env.GENIE_HANDLE)}/chat/conversations`, {
       method: "POST",
       headers
     });
@@ -74,11 +74,28 @@ app.post("/api/generate-conversation", async (req, res) => {
       return res.status(conversationResponse.status).json({ error: `Failed to create conversation: ${errorText}` });
     }
 
-    const { conversation_id: conversationId } = await conversationResponse.json();
+    const conversationBody = await conversationResponse.json();
+    const conversationId =
+      conversationBody.conversation_id ??
+      conversationBody.conversationId ??
+      conversationBody.id ??
+      conversationBody.result?.conversation_id ??
+      conversationBody.result?.conversationId ??
+      conversationBody.result?.id ??
+      conversationBody.conversation?.id ??
+      conversationBody.conversation?.conversation_id;
+
+    if (typeof conversationId !== "string" || conversationId.length === 0) {
+      console.error("Workato conversation creation returned an unexpected response:", {
+        body: loggableErrorBody(JSON.stringify(conversationBody))
+      });
+      return res.status(502).json({ error: "Failed to determine the Workato conversation ID" });
+    }
+
     console.log("Workato conversation created:", { conversationId });
 
     // Send theme to the conversation
-    const messageResponse = await fetch(`${WORKATO_BASE}/genies/${process.env.GENIE_HANDLE}/chat/conversations/${conversationId}/messages`, {
+    const messageResponse = await fetch(`${WORKATO_BASE}/genies/${encodeURIComponent(process.env.GENIE_HANDLE)}/chat/conversations/${encodeURIComponent(conversationId)}/messages`, {
       method: "POST",
       headers,
       body: JSON.stringify({ message: theme, stream: true })

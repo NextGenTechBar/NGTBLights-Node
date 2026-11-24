@@ -4,13 +4,46 @@ import Markdown from 'react-markdown';
 import '../App.scss';
 import ModalAlert from './ModalAlert.js'
 
+const WIZARD_TOWER_STORAGE_KEY = 'hemmTreeWizardTower';
+
+const getSavedWizardTower = () => {
+    try {
+        const saved = sessionStorage.getItem(WIZARD_TOWER_STORAGE_KEY);
+        return saved ? JSON.parse(saved) : null;
+    } catch (error) {
+        return null;
+    }
+};
+
 const Wizard = (props) => {
     const { client } = props.mqttClient;
     const [showModal, setShowModal] = useState(false);
     const [clickCount, setClickCount] = useState(0);
     const clickTimestamps = useRef([]);
     const [timer, setTimer] = useState(null);
-    const [genieResponse, setGenieResponse] = useState('');
+    const [genieResponse, setGenieResponse] = useState(() => getSavedWizardTower()?.response || '');
+    const [isRevealing, setIsRevealing] = useState(() => false);
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [showFollowResponse, setShowFollowResponse] = useState(false);
+    const genieResponseRef = useRef(null);
+    const wizardTowerRef = useRef(null);
+    const responseEndRef = useRef(null);
+    const autoFollowRef = useRef(false);
+    const scrollFrameRef = useRef(null);
+
+    useEffect(() => {
+        if (!genieResponse || isRevealing || genieResponse.startsWith('The wizard is casting')) {
+            return;
+        }
+
+        try {
+            sessionStorage.setItem(WIZARD_TOWER_STORAGE_KEY, JSON.stringify({
+                response: genieResponse
+            }));
+        } catch (error) {
+            console.error('Unable to save the Wizard response.', error);
+        }
+    }, [genieResponse, isRevealing]);
 
     useEffect(() => {
         if (clickCount >= 5) {
@@ -19,6 +52,56 @@ const Wizard = (props) => {
             clickTimestamps.current = [];
         }
     }, [clickCount]);
+
+    useEffect(() => {
+        const handleUserScroll = () => {
+            if (!isGenerating || !autoFollowRef.current) {
+                return;
+            }
+
+            autoFollowRef.current = false;
+            if (scrollFrameRef.current !== null) {
+                cancelAnimationFrame(scrollFrameRef.current);
+                scrollFrameRef.current = null;
+            }
+            setShowFollowResponse(true);
+        };
+
+        window.addEventListener('wheel', handleUserScroll, { passive: true });
+        window.addEventListener('touchmove', handleUserScroll, { passive: true });
+        return () => {
+            window.removeEventListener('wheel', handleUserScroll);
+            window.removeEventListener('touchmove', handleUserScroll);
+        };
+    }, [isGenerating]);
+
+    const isMobileLayout = () => window.matchMedia('(max-width: 1139px)').matches;
+
+    const followResponse = (resumeFollowing = true) => {
+        if (!isMobileLayout()) {
+            return;
+        }
+
+        if (resumeFollowing) {
+            autoFollowRef.current = true;
+            setShowFollowResponse(false);
+        }
+
+        if (!autoFollowRef.current) {
+            return;
+        }
+
+        if (scrollFrameRef.current !== null) {
+            return;
+        }
+
+        scrollFrameRef.current = requestAnimationFrame(() => {
+            if (autoFollowRef.current) {
+                responseEndRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
+            }
+            scrollFrameRef.current = null;
+        });
+    };
 
     //Deprecated click function for secret codes.
     const handleClick = (event, mode) => {
@@ -116,12 +199,26 @@ const Wizard = (props) => {
     const handleClickExperimental = async (event, mode) => {
         event.preventDefault(); // Prevent the form from submitting and reloading the page
 
+        if (isGenerating) {
+            return;
+        }
+
+        setIsGenerating(true);
+        autoFollowRef.current = isMobileLayout();
+        setShowFollowResponse(false);
+        if (autoFollowRef.current) {
+            requestAnimationFrame(() => {
+                if (autoFollowRef.current) {
+                    wizardTowerRef.current?.scrollIntoView({ behavior: 'auto', block: 'start' });
+                }
+            });
+        }
+
         var colorToSend = '';
  
         colorToSend = 'invalid';
 
         document.getElementById('ExperimentalField').value = '';
-        document.getElementById('ExperimentalField').placeholder = 'Mode will display in ~15 seconds!';
         
 
         //var options = { retain: true };
@@ -132,7 +229,9 @@ const Wizard = (props) => {
         try {
             await generateTheme(mode);
         } catch (error) {
-            document.getElementById('GenieResponse').innerText = "Error generating theme. Please try again.";
+            setGenieResponse("Error generating theme. Please try again.");
+        } finally {
+            setIsGenerating(false);
         }
 
         console.log('Message sent');
@@ -233,39 +332,102 @@ const Wizard = (props) => {
      * References: Called by sendWebhook function after sending a request to the backend (apiURL is GET /api/generate-conversation).
      */
     async function generateTheme(theme) {
-        const response = await fetch('/api/generate-conversation', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ theme })
-        });
+        let castingDots = "";
+        setGenieResponse("The wizard is casting.");
+        const castingInterval = setInterval(() => {
+            castingDots = castingDots.length >= 3 ? "" : `${castingDots}.`;
+            setGenieResponse(`The wizard is casting${castingDots}`);
+        }, 400);
 
-        if (!response.ok) {
-            console.error("Error generating theme:", response.status);
-            return;
-        }
+        try {
+            const response = await fetch('/api/generate-conversation', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ theme })
+            });
 
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder("utf-8");
-        let result = "";
-
-        while (true) {
-            const { value, done } = await reader.read();
-
-            if (done) {
-                break;
+            if (!response.ok) {
+                console.error("Error generating theme:", response.status);
+                const errorBody = await response.text();
+                throw new Error(errorBody || `Request failed: ${response.status}`);
             }
 
-            const chunk = decoder.decode(value, { stream: true });
-            result += chunk;
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder("utf-8");
+            let sseBuffer = "";
+            let result = "";
+            const revealDelay = 15;
 
-            document.getElementById('GenieResponse').innerText = result;
+            const consumeEventBuffer = () => {
+                const events = sseBuffer.split("\n\n");
+                sseBuffer = events.pop() || "";
+
+                for (const event of events) {
+                    const dataLine = event
+                        .split("\n")
+                        .find((line) => line.startsWith("data: "));
+
+                    if (!dataLine) {
+                        continue;
+                    }
+
+                    try {
+                        const data = JSON.parse(dataLine.slice(6));
+                        if (data.type === "agent.message" && typeof data.message === "string") {
+                            result = data.message;
+                        }
+                    } catch (error) {
+                        console.error("Unable to parse Workato SSE event:", error);
+                    }
+                }
+            };
+
+            while (true) {
+                const { value, done } = await reader.read();
+
+                if (done) {
+                    break;
+                }
+
+                const chunk = decoder.decode(value, { stream: true });
+                sseBuffer += chunk;
+                consumeEventBuffer();
+            }
+
+            sseBuffer += decoder.decode();
+            consumeEventBuffer();
+
+            clearInterval(castingInterval);
+            let visibleResponse = "";
+            setGenieResponse("");
+            setIsRevealing(true);
+            await new Promise((resolve) => requestAnimationFrame(resolve));
+
+            for (const character of Array.from(result)) {
+                visibleResponse += character;
+                if (genieResponseRef.current) {
+                    genieResponseRef.current.textContent = visibleResponse;
+                }
+                followResponse(false);
+                let delay = revealDelay;
+                if (/[.!?]/.test(character)) {
+                    delay = 450;
+                } else if (/[,;:]/.test(character)) {
+                    delay = 220;
+                }
+
+                await new Promise((resolve) => setTimeout(resolve, delay));
+            }
+
+            setGenieResponse(result);
+            followResponse(false);
+            return result;
+        } finally {
+            clearInterval(castingInterval);
+            setIsRevealing(false);
         }
-
-        result += decoder.decode();
-
-        return result;
     }
 
     /**
@@ -360,34 +522,59 @@ const Wizard = (props) => {
                 <div id="experimental-section" style={{borderRadius: '12px', padding: '22px'}}>
                     <div className="example-commands">
                         <div className="example-commands-label">Example Commands:</div>
-                        <button id="ocean-button" className="example-command" onClick={(event) => ratelimitExperimental(event, 'ocean')}>Ocean</button>
-                        <button id="sunset-button" className="example-command" onClick={(event) => ratelimitExperimental(event, 'sunset')}>Sunset</button>
-                        <button id="seahawks-button" className="example-command" onClick={(event) => ratelimitExperimental(event, 'seahawks')}>Seahawks</button>
+                        <button id="beach-button" className="example-command" disabled={isGenerating} onClick={(event) => ratelimitExperimental(event, 'beach')}>Beach</button>
+                        <button id="sunset-button" className="example-command" disabled={isGenerating} onClick={(event) => ratelimitExperimental(event, 'sunset')}>Sunset</button>
+                        <button id="seahawks-button" className="example-command" disabled={isGenerating} onClick={(event) => ratelimitExperimental(event, 'seahawks')}>Seahawks</button>
                     </div>
                     <form onSubmit={(event) => ratelimitExperimental(event, document.getElementById('ExperimentalField').value)}>
                         <input
                             type="text"
                             id="ExperimentalField"
                             name="Custom2"
-                            placeholder="Enter a color theme!"
+                            placeholder={isGenerating ? 'Wizard is casting!' : 'Enter a color theme!'}
                             maxLength={50}
                             minLength={1}
+                            disabled={isGenerating}
                             style={{ marginTop: '10px', width: '70%' }}
                         />
-                        <button type="submit" className='submit-button tile' style={{ display: 'block', marginTop: '10px', backgroundColor: '#c1c6c8', color: 'black', fontWeight: 'bold' }}>
-                            Generate
+                        <button type="submit" className='submit-button tile' disabled={isGenerating} style={{ display: 'block', marginTop: '10px', backgroundColor: '#c1c6c8', color: 'black', fontWeight: 'bold' }}>
+                            {isGenerating ? 'Generating...' : 'Generate'}
                         </button>
                     </form>
 
                 </div>
             </div>
 
-            <div className="wizard-tower">
-                <h3>Wizard's Tower:</h3>
-                <Markdown id="GenieResponse" style={{ marginTop: '10px', color: 'black' }}>
-                    {genieResponse || 'The wizard is sleeping...'}
-                </Markdown>
+            <div ref={wizardTowerRef} className="wizard-tower">
+                <div className="wizard-tower-header">
+                    <img
+                        className="wizard-avatar"
+                        src="/hemm-tree-wizard.jpg"
+                        alt="HemmTree Wizard"
+                    />
+                    <h3>Wizard's Tower:</h3>
+                </div>
+                {isRevealing ? (
+                    <div ref={genieResponseRef} id="GenieResponse" style={{ marginTop: '10px', color: 'black', whiteSpace: 'pre-wrap', width: '100%' }}>
+                        {genieResponse}
+                    </div>
+                ) : (
+                    <Markdown id="GenieResponse" style={{ marginTop: '10px', color: 'black' }}>
+                        {genieResponse || 'The wizard is sleeping...'}
+                    </Markdown>
+                )}
+                <span ref={responseEndRef} aria-hidden="true" />
             </div>
+
+            {showFollowResponse && (
+                <button
+                    type="button"
+                    className="follow-response"
+                    onClick={followResponse}
+                >
+                    Follow response
+                </button>
+            )}
 
             {/* Modal Alert */}
             <ModalAlert show={showModal} onClose={() => setShowModal(false)}>
