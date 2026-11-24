@@ -4,11 +4,7 @@ const path = require('path');
 const express = require('express'); // import express
 const https = require('https');
 const cors = require('cors'); // import cors
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config({
-    path: path.resolve(__dirname, '../.env')
-  });
-}
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') }); // load environment variables from .env file
 const app = express(); // creating an express app
 const fs = require('fs');
 const morgan = require('morgan'); //logging that Tyler wanted to implement to see unwanted connections
