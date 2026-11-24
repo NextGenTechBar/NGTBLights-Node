@@ -4,6 +4,7 @@ import ModalAlert from './ModalAlert.js'
 // import './styles/static_colors.scss'; // Make sure to create and style this CSS file
 
 import '../App.scss';
+import { publishCurrentSelection } from './currentSelection';
 const StaticColors = (props) => {
     const {client} = props.MqttClient;
     // const mqttClient = client.mqttClient;
@@ -13,6 +14,13 @@ const StaticColors = (props) => {
         '#0000FF', '#0000CC', '#000080', '#EE00EE', '#FF00FF',
         '#FFC0CB', '#8d4cc8', '#800080', '#660066', '#FF0080',
         '#FFDAB9', '#ffffff'
+    ];
+    const colorNames = [
+        'Red', 'Dark red', 'Orange', 'Yellow',
+        'Lime', 'Green', 'Dark green', 'Cyan', 'Teal',
+        'Blue', 'Dark blue', 'Navy', 'Violet', 'Magenta',
+        'Pink', 'Purple', 'Purple', 'Deep purple', 'Hot pink',
+        'Peach', 'White'
     ];
 
     const [showModal, setShowModal] = useState(false);
@@ -35,6 +43,7 @@ const StaticColors = (props) => {
         var options = { retain: true };
         console.log(colorToSend);
         client.publish('GUHemmTree', colorToSend, options);
+        publishCurrentSelection(client, `${colorNames[index]}`);
         client.publish('GUHemmTreeStats', colorToSend+"," + props.User.user);
         // if(props.User.user === 'mqtt_web_user_d767e6c6cb95'){
         //     alert('You are not allowed to change the color');
@@ -63,7 +72,7 @@ const StaticColors = (props) => {
     const buttons = colors.map((color, index) => (
         <button
             key={index} 
-            className="color-button" 
+            className="color-button tile" 
             style={{ backgroundColor: color }} 
             onClick={() => ratelimit(color, index)}
         >
@@ -90,7 +99,9 @@ const StaticColors = (props) => {
     }
     return (
         <div className="static-colors-container">
-            <h1>Colors</h1>
+            <div className="panel-header">
+                <h2>Click a color to change the tree!</h2>
+            </div>
             <div className="grid-container">
                 {buttons}
             </div>

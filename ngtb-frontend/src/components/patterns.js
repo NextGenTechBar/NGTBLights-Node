@@ -5,6 +5,7 @@ import ModalAlert from './ModalAlert.js'
 // import './styles/patterns.scss'; // Make sure to create and style this CSS file
 import Modal from './Modal'; // Import the Modal component
 import Pride from './pride'; // Import the Pride component
+import { publishCurrentSelection } from './currentSelection';
 
 const Pattern = (props) => {
     const { client } = props.mqttClient;
@@ -88,6 +89,7 @@ const Pattern = (props) => {
         var options = { retain: true };
         console.log(colorToSend);
         client.publish('GUHemmTree', colorToSend, options);
+        publishCurrentSelection(client, labels[index]);
         client.publish('GUHemmTreeStats', colorToSend+"," + props.User.user);
 
         console.log('Message sent');
@@ -138,12 +140,14 @@ const Pattern = (props) => {
 
     return (
         <div className="static-colors-container">
-            <h2>Patterns!</h2>
+            <div className="panel-header">
+                <h2>Apply color patterns to the tree!</h2>
+            </div>
             <div className="grid-container">
                 {pattern.map((pattern, index) => (
                     <div key={index} className="pattern-button-container">
                         <button
-                            className="pattern-button"
+                            className="pattern-button tile"
                             style={{ backgroundImage: images[index] }}
                             onClick={() => ratelimit(pattern, index)}
                         >
@@ -160,7 +164,7 @@ const Pattern = (props) => {
                     >
                         {/* Launch Pride */}
                     </button>
-                    <div className="pattern-label">Launch Pride</div>
+                    <div className="label">Launch Pride</div>
                 </div>
                 <Modal show={showModal} onClose={() => setShowModal(false)}>
                     <Pride mqttClient={{client: client}} User={{ user:props.User.user}}/>

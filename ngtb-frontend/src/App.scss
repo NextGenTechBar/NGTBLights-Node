@@ -31,55 +31,14 @@ $gradient-bottom-left: linear-gradient(315deg, #b12a3bff, #132f5fff, #ffffffff, 
 $gradient-radial: radial-gradient(#b12a3bff, #132f5fff, #ffffffff, #6c9a8bff, #f68e5fff);
 
 /* styles.scss */
-
-/* General styles */
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    background: $delft-blue;
-    align-items: flex-start;
-    padding-top: 50px;
-}
-
-h1, h2 {
-    color: $white;
-}
-
-button {
-    display: inline-block;
-    width: 20vw;
-    max-width: 150px;
-    height: 50px;
-    margin: 10px;
-    border-radius: 15px;
-    // background-color: $atomic-tangerine;
-    color: $white;
+.header {
+    padding: 20px;
     text-align: center;
-    font-size: 16px;
-    cursor: pointer;
-    box-shadow: 4px rgba(0, 0, 0, 1);
-    transition: transform 0.1s, box-shadow 0.1s;
-    background-size: cover; /* Ensure the background image covers the button */
-    background-position: center; /* Center the background image */
+    color: $white;
+    width: 100%;
+    font-style: italic;
 }
 
-button:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transform: scale(1.1);
-}
-
-button:active {
-    transform: scale(0.8);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-.submit-button {
-    background-color: $cardinal;
-    width: auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow to submit button */
-}
 
 /* App container styles */
 .app-container {
@@ -115,6 +74,11 @@ button:active {
     cursor: pointer;
 }
 
+.panel-header {
+    text-align: center;
+    color: $white;
+}
+
 button.close-button {
     color: $white;
 }
@@ -134,16 +98,20 @@ button.close-button {
 
 /* Static colors container styles */
 .static-colors-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: $cardinal;
-    padding: 20px;
-    border-radius: 10px;
-    width: 100%;
-    max-height: calc(100vh - 100px); /* Adjust to leave space for arrows */
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(
+    145deg,
+    #b12a3b,
+    #8f2334
+  );
+  padding: 20px;
+  border-radius: 0 0 10px 10px;
+  width: 100%;
+  max-height: calc(100vh - 100px); /* Adjust to leave space for arrows */
+  box-sizing: border-box;
 }
 
 .grid-container {
@@ -152,17 +120,13 @@ button.close-button {
     // gap: 5px;
     // width: 100%;
     border-radius: 4px;
-    background-color: $grey;
-    max-height: calc(100vh - 100px); /* Adjust to leave space for arrows */
-    overflow-y: auto; /* Allow vertical scrolling if needed */
+    color: $white;
     overflow-x: hidden; /* Prevent horizontal scrolling */
     box-sizing: border-box;
 }
 .grid-container input [type="text"] {
     border-radius: 4px;
     background-color: $grey;
-    max-height: calc(100vh - 100px); /* Adjust to leave space for arrows */
-    overflow-y: auto; /* Allow vertical scrolling if needed */
     overflow-x: hidden; /* Prevent horizontal scrolling */
     box-sizing: border-box;
     display: block;
@@ -173,17 +137,16 @@ button.close-button {
     margin-top: 10px;
 }
 
-/* Custom container styles */
-.custom-container {
+/* wizard container styles */
+.wizard-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: $cardinal;
-    padding: 20px;
-    border-radius: 10px;
+    padding: 0;
+    border-radius: 0 0 10px 10px;
     width: 100%;
-    max-height: calc(100vh - 100px); /* Adjust to leave space for arrows */
     box-sizing: border-box;
 }
 
@@ -193,6 +156,72 @@ button.close-button {
     justify-content: center;
     align-items: center;
     width: 100%;
+}
+
+.example-command {
+    width: 140px;
+    max-width: none;
+    min-height: 58px;
+    padding: 10px 20px;
+    border: 2px solid rgba(255, 255, 255, 0.65);
+    border-radius: 12px;
+    color: $white;
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    background-size: 180% 180%;
+    background-position: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.example-commands {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.example-commands-label {
+    flex-basis: 100%;
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+#beach-button {
+    background-image:
+        radial-gradient(circle at 25% 20%, rgba(255, 255, 255, 0.7), transparent 18%),
+        linear-gradient(160deg, #8ee7f5 0%, #147ca1 48%, #062c59 100%);
+    text-shadow: 0 1px 3px #062c59;
+}
+
+#sunset-button {
+    background-image:
+        radial-gradient(circle at 70% 22%, rgba(255, 214, 137, 0.9), transparent 20%),
+        linear-gradient(155deg, #ffdb70 0%, #f47b4e 48%, #8d214b 100%);
+    text-shadow: 0 1px 3px #6d173b;
+}
+
+#seahawks-button {
+    background-image:
+        linear-gradient(135deg, #0b315f 0%, #167f72 48%, #69be28 49%, #173d2b 100%);
+    text-shadow: 0 1px 3px #09233f;
+}
+
+.example-command:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.example-command:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.example-command:focus-visible {
+    outline: 3px solid $white;
+    outline-offset: 3px;
 }
 
 form {
@@ -211,6 +240,18 @@ input[type="text"] {
     font-size: 16px;
 }
 
+input[type="text"]:disabled {
+    opacity: 1;
+    background-color: #fff;
+    color: #212529;
+    border-color: #ccc;
+}
+
+input[type="text"]:disabled::placeholder {
+    color: #6c757d;
+    opacity: 1;
+}
+
 button[type="submit"] {
     padding: 10px 20px;
     border-radius: 5px;
@@ -224,7 +265,6 @@ button[type="submit"] {
 
 button[type="submit"]:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transform: scale(1.1);
 }
 
 button[type="submit"]:active {
@@ -233,8 +273,435 @@ button[type="submit"]:active {
 }
 .label {
     margin-top: 5px;
-    color: black;
-    font-size: 14px;
+    font-size: 16px;
     margin: 1px;
     text-align: center;
+}
+
+.tile {
+    border: 2px solid rgba(255, 255, 255, 0.65);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tile:hover {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+.tile:active {
+    transform: translateY(0) scale(0.98);
+}
+
+.tile:focus-visible {
+    outline: 3px solid $white;
+    outline-offset: 3px;
+}
+
+.tile.is-selected {
+  box-shadow:
+    0 0 0 3px white,
+    0 0 24px var(--tile-color);
+}
+
+/* Boxed tabs: the selected tab shares the panel's background and border, and a 1px offset fuses the two. */
+.tabs {
+    --bt-tab: #d6dde6;
+    --bt-tab-hover: #e2e8f0;
+    --bt-muted: #4a576d;
+    --bt-text: #1c2430;
+    --bt-border: #dde3ec;
+    --bt-focus: #2563eb;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 560px;
+    padding: 0;
+    display: flex;
+    gap: 6px;
+}
+
+.tabs .tab {
+    position: relative;
+    top: 1px;
+    margin: 0;
+    border: 1px solid transparent;
+    border-bottom: 0;
+    background: $grey;
+    color: var(--bt-muted);
+    font: inherit;
+    font-size: .87rem;
+    font-weight: 700;
+    padding:  20px 13px;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex: 1 1 0;
+    min-width: 0;
+    cursor: pointer;
+    transition: background-color .15s;
+    
+}
+
+.tabs .tab:hover {
+    background: var(--bt-tab-hover);
+}
+
+.tabs .tab[aria-selected="true"] {
+    background: $cardinal;
+    color: $white;
+}
+
+.tabs h2 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+}
+
+.tabs p {
+    margin: 0;
+    font-size: .88rem;
+    line-height: 1.7;
+    color: var(--bt-muted);
+    position: absolute;
+    left: 0;
+}
+
+.tabs .tab:focus-visible {
+    outline: 2px solid var(--bt-focus);
+    outline-offset: -4px;
+}
+
+.tabs [hidden] {
+    display: none;
+}
+
+@media (max-width: 480px) {
+    .tabs [role="tab"] {
+        padding: 11px 14px 13px;
+    }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tabs .tab {
+        transition: none;
+    }
+}
+
+//Set tab text to abbreviated form on small screens
+@media (max-width: 360px) {
+  .tabs .tab {
+    font-size: 0.75rem;
+    padding: 8px 12px 10px;
+  }
+}
+
+@media (min-width: 361px) and (max-width: 550px) {
+  .tabs .tab {
+    font-size: 0.85rem;
+    padding: 10px 16px 12px;
+  }
+}
+
+
+/* General styles */
+body {
+    background:
+        radial-gradient(circle at 20% 10%, rgba(177, 42, 59, 0.3), transparent 35%),
+        linear-gradient(135deg, #0d2145, #132f5f 60%, #182b4f);
+    display: block;
+    min-height: 100dvh;
+    height: auto;
+    margin: 0;
+    background: $delft-blue;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+#root {
+    width: 100%;
+    min-height: 100dvh;
+}
+
+h1, h2 {
+    color: $white;
+}
+
+button {
+    display: inline-block;
+    width: 20vw;
+    max-width: 150px;
+    height: 50px;
+    margin: 10px;
+    border-radius: 15px;
+    // background-color: $atomic-tangerine;
+    color: $white;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 4px rgba(0, 0, 0, 1);
+    transition: transform 0.1s, box-shadow 0.1s;
+    background-size: cover; /* Ensure the background image covers the button */
+    background-position: center; /* Center the background image */
+}
+
+.submit-button {
+    background-color: $cardinal;
+    width: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow to submit button */
+}
+
+.app-container > [role="tabpanel"] {
+    width: 100%;
+    max-width: 560px;
+}
+
+.view-area {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+}
+
+.view-area > [role="tabpanel"] {
+    width: 100%;
+}
+
+
+.wizard-layout {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    align-items: flex-start;
+    overflow-x: hidden;
+    overflow-y: visible;
+}
+
+.wizard-container {
+    flex: 1 1 0;
+    min-width: 0;
+    border-radius: 0 0 10px 10px;
+}
+
+.wizard-tower {
+    flex: 1 1 0;
+    min-width: 0;
+    background-color: $grey;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    border-radius: 0 0 10px 10px;
+    overflow-wrap: anywhere; /* Ensure long words break to prevent overflow */
+}
+
+.wizard-tower-header {
+    width: 100%;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 112px;
+}
+
+.wizard-tower-header h3 {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+}
+
+.wizard-avatar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 112px;
+    height: 112px;
+    flex: 0 0 auto;
+    object-fit: cover;
+    object-position: center;
+    border: 3px solid $white;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+.follow-response {
+    box-sizing: border-box;
+    position: fixed;
+    left: 50%;
+    bottom: 16px;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: min(280px, calc(100vw - 32px));
+    padding: 12px 20px;
+    border: 2px solid $white;
+    border-radius: 999px;
+    background-color: $delft-blue;
+    color: $white;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+.follow-response:hover {
+    background-color: $cardinal;
+}
+
+.example-commands {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 10px;
+    color: $white;
+}
+
+.tile.is-selected {
+    box-shadow:
+        0 0 0 3px $white,
+        0 0 24px var(--tile-color);
+}
+
+.App {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    min-height: 100dvh;
+}
+
+.header {
+    flex: 0 0 auto;
+    width: 100%;
+    text-align: center;
+    margin: 0;
+    padding: 16px 16px 8px;
+    color: $white;
+    height: auto;
+    box-sizing: border-box;
+}
+
+.header h1 {
+    margin: 0;
+}
+
+.current-selection {
+    margin: 6px 0 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.app-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    max-height: none;
+    width: min(90vw, 560px);
+    margin: 0 auto;
+    padding: 0 0 24px;
+    justify-content: flex-start;
+}
+
+.static-colors-container {
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+}
+
+.static-colors-container .grid-container {
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+}
+
+/* Large screens: side-by-side */
+@media (min-width: 1140px) {
+    .wizard-active.app-container {
+        width: 1140px;
+    }
+
+    .wizard-active .view-area {
+        width: 1140px;
+        max-width: 1140px;
+    }
+
+    .wizard-active .view-area > [role="tabpanel"] {
+        padding-top: 0;
+        margin-top: 0;
+        width: 1140px;
+        max-width: 1140px;
+    }
+
+    .wizard-layout {
+        display: grid;
+        grid-template-columns: 560px 560px;
+        gap: 20px;
+        width: 1140px;
+        overflow: visible;
+    }
+
+    .wizard-active .tabs {
+        position: static;
+        width: 560px;
+        max-width: 560px;
+    }
+
+    .wizard-active .wizard-container,
+    .wizard-active .wizard-tower {
+        width: 560px;
+        max-width: 560px;
+    }
+
+    .wizard-tower {
+        min-height: 100%;
+    }
+}
+
+/* Small screens: stacked and scrollable */
+@media (max-width: 1139px) {
+    .wizard-tower-header {
+        min-height: 72px;
+    }
+
+    .wizard-avatar {
+        width: 72px;
+        height: 72px;
+    }
+
+    .wizard-layout {
+        flex-direction: column;
+        overflow: visible;
+        padding-bottom: 20px;
+    }
+
+    .view-area {
+        max-width: 560px;
+    }
+
+    .wizard-container,
+    .wizard-tower {
+        width: 100%;
+        flex: none;
+    }
+
+    .wizard-tower {
+        max-height: none;
+        overflow: visible;
+    }
+
+    .wizard-active .tabs {
+        position: static;
+    }
+
+    .example-commands {
+        width: 100%;
+    }
 }

@@ -3,6 +3,7 @@ import ModalAlert from './ModalAlert.js'
 
 // import './styles/patterns.scss'; // Make sure to create and style this CSS file
 import '../App.scss';
+import { publishCurrentSelection } from './currentSelection';
 
 const Pride = (props) => {
     const {client} = props.mqttClient;
@@ -62,6 +63,7 @@ const Pride = (props) => {
         var options = { retain: true };
         console.log(colorToSend);
         client.publish('GUHemmTree', colorToSend, options);
+        publishCurrentSelection(client, labels[index]);
         client.publish('GUHemmTreeStats', colorToSend+"," + props.User.user);
 
         console.log('Message sent');

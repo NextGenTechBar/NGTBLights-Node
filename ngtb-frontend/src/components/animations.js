@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 // import './styles/animations.scss'; // Make sure to create and style this CSS file
 import '../App.scss';
 import ModalAlert from './ModalAlert.js'
+import { publishCurrentSelection } from './currentSelection';
 
 const Animations = (props) => {
     const {client} = props.mqttClient;
@@ -18,6 +19,7 @@ const Animations = (props) => {
             clickTimestamps.current = [];
         }
     }, [clickCount]);
+
     const animations = [
         'DYNAMrainbow',
         'DYNAMchase',
@@ -41,6 +43,7 @@ const Animations = (props) => {
         'url(./twinklemod.gif)',
 	'url(./slide.gif)'
     ];
+
     const labels = [
         'Rainbow Zoom', 
         'Color Chase',
@@ -52,6 +55,7 @@ const Animations = (props) => {
         'Shimmer',
 	'Slide'
     ];
+
     const handleClick = (animations, index) => {
         console.log(`Button ${index + 1} with color ${animations} clicked`);
 
@@ -63,6 +67,9 @@ const Animations = (props) => {
 	}
         console.log(colorToSend);
         client.publish('GUHemmTree', colorToSend, options);
+	if (options.retain) {
+	    publishCurrentSelection(client, labels[index]);
+	}
         client.publish('GUHemmTreeStats', colorToSend+"," + props.User.user);
 
         console.log('Message sent');
@@ -88,7 +95,7 @@ const Animations = (props) => {
         <div key={index} className="animation-button-container">
             <button
                 key={index} 
-                className="animation-button" 
+                className="animation-button tile" 
                 style={{ backgroundImage: images[index] }}
                 onClick={() => ratelimit(animations, index)}
             >
@@ -101,7 +108,9 @@ const Animations = (props) => {
     
     return (
         <div className="static-colors-container">
-            <h1>Animations!</h1>
+            <div className="panel-header">
+                <h2>Apply animations to the current color scheme!</h2>
+            </div>
             <div className="grid-container">
                 {buttons}
             </div>

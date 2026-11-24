@@ -3,3 +3,4 @@ node_modules/
 .env
 *.ppk
 *.pem
+/ngtb-node-server/route.js

@@ -1,8 +1,21 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+jest.mock('mqtt', () => ({
+  __esModule: true,
+  default: {
+    connect: jest.fn(() => ({
+      connected: false,
+      on: jest.fn(),
+      removeListener: jest.fn(),
+      subscribe: jest.fn(),
+    })),
+  },
+}));
+
+test('renders the app title and current light selection status', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+
+  expect(screen.getByRole('heading', { name: /hemmTree lights app/i })).toBeInTheDocument();
+  expect(screen.getByRole('status')).toHaveTextContent('Current lights: Waiting for a selection');
 });
