@@ -593,6 +593,12 @@ button {
     margin: 0;
 }
 
+.current-selection {
+    margin: 6px 0 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
 .app-container {
     flex: 1 1 auto;
     min-height: 0;

@@ -3,6 +3,7 @@ import Markdown from 'react-markdown';
 // import './styles/patterns.scss'; // Make sure to create and style this CSS file
 import '../App.scss';
 import ModalAlert from './ModalAlert.js'
+import { publishCurrentSelection } from './currentSelection';
 
 const WIZARD_TOWER_STORAGE_KEY = 'hemmTreeWizardTower';
 
@@ -25,7 +26,6 @@ const Wizard = (props) => {
     const [isRevealing, setIsRevealing] = useState(() => false);
     const [isGenerating, setIsGenerating] = useState(false);
     const [showFollowResponse, setShowFollowResponse] = useState(false);
-    const genieResponseRef = useRef(null);
     const wizardTowerRef = useRef(null);
     const responseEndRef = useRef(null);
     const autoFollowRef = useRef(false);
@@ -190,6 +190,9 @@ const Wizard = (props) => {
 
         console.log(colorToSend);
         client.publish('GUHemmTree', colorToSend, options);
+        if (options.retain && colorToSend !== 'invalid') {
+            publishCurrentSelection(client, `${mode}`);
+        }
         client.publish('GUHemmTreeStats', colorToSend + "," + props.User.user);
 
         console.log('Message sent');
@@ -399,6 +402,7 @@ const Wizard = (props) => {
             sseBuffer += decoder.decode();
             consumeEventBuffer();
 
+            publishCurrentSelection(client, theme);
             clearInterval(castingInterval);
             let visibleResponse = "";
             setGenieResponse("");
@@ -407,9 +411,7 @@ const Wizard = (props) => {
 
             for (const character of Array.from(result)) {
                 visibleResponse += character;
-                if (genieResponseRef.current) {
-                    genieResponseRef.current.textContent = visibleResponse;
-                }
+                setGenieResponse(visibleResponse);
                 followResponse(false);
                 let delay = revealDelay;
                 if (/[.!?]/.test(character)) {
@@ -522,9 +524,9 @@ const Wizard = (props) => {
                 <div id="experimental-section" style={{borderRadius: '12px', padding: '22px'}}>
                     <div className="example-commands">
                         <div className="example-commands-label">Example Commands:</div>
-                        <button id="beach-button" className="example-command" disabled={isGenerating} onClick={(event) => ratelimitExperimental(event, 'beach')}>Beach</button>
-                        <button id="sunset-button" className="example-command" disabled={isGenerating} onClick={(event) => ratelimitExperimental(event, 'sunset')}>Sunset</button>
-                        <button id="seahawks-button" className="example-command" disabled={isGenerating} onClick={(event) => ratelimitExperimental(event, 'seahawks')}>Seahawks</button>
+                        <button id="beach-button" className="example-command" disabled={isGenerating} onClick={(event) => ratelimitExperimental(event, 'Beach')}>Beach</button>
+                        <button id="sunset-button" className="example-command" disabled={isGenerating} onClick={(event) => ratelimitExperimental(event, 'Sunset')}>Sunset</button>
+                        <button id="seahawks-button" className="example-command" disabled={isGenerating} onClick={(event) => ratelimitExperimental(event, 'Seahawks')}>Seahawks</button>
                     </div>
                     <form onSubmit={(event) => ratelimitExperimental(event, document.getElementById('ExperimentalField').value)}>
                         <input
@@ -554,15 +556,11 @@ const Wizard = (props) => {
                     />
                     <h3>Wizard's Tower:</h3>
                 </div>
-                {isRevealing ? (
-                    <div ref={genieResponseRef} id="GenieResponse" style={{ marginTop: '10px', color: 'black', whiteSpace: 'pre-wrap', width: '100%' }}>
-                        {genieResponse}
-                    </div>
-                ) : (
-                    <Markdown id="GenieResponse" style={{ marginTop: '10px', color: 'black' }}>
-                        {genieResponse || 'The wizard is sleeping...'}
+                <div id="GenieResponse" style={{ marginTop: '10px', color: 'black', whiteSpace: 'pre-wrap', width: '100%' }}>
+                    <Markdown>
+                        {genieResponse || (isRevealing ? '' : 'The wizard is sleeping...')}
                     </Markdown>
-                )}
+                </div>
                 <span ref={responseEndRef} aria-hidden="true" />
             </div>
 

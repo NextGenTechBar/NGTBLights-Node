@@ -6,6 +6,7 @@ import Wizard from './components/wizard';
 import './App.scss';
 import mqtt from 'mqtt';
 import Cookies from 'js-cookie';
+import { CURRENT_SELECTION_TOPIC } from './components/currentSelection';
 
 const protocol = 'wss';
 const host = 'ngtblights.gonzaga.edu';
@@ -40,6 +41,7 @@ function App() {
     onConnect();
     // console.log(clientId);
     const [currentView, setCurrentView] = useState('staticColors');
+    const [currentSelection, setCurrentSelection] = useState('');
 
     const tabs = [
         { id: 'bt-tab-0', label: 'Colors', view: 'staticColors', component: StaticColors, mqttProp: 'MqttClient' },
@@ -49,6 +51,36 @@ function App() {
     ];
     const views = tabs.map((tab) => tab.view);
     const [browser, setBrowser] = useState('');
+
+    useEffect(() => {
+        if (!mqttClient) {
+            return undefined;
+        }
+
+        const handleMessage = (topic, payload) => {
+            if (topic === CURRENT_SELECTION_TOPIC) {
+                setCurrentSelection(payload.toString());
+            }
+        };
+        const subscribeToSelection = () => {
+            mqttClient.subscribe(CURRENT_SELECTION_TOPIC, (error) => {
+                if (error) {
+                    console.error('Unable to subscribe to the current light selection.', error);
+                }
+            });
+        };
+
+        mqttClient.on('message', handleMessage);
+        mqttClient.on('connect', subscribeToSelection);
+        if (mqttClient.connected) {
+            subscribeToSelection();
+        }
+
+        return () => {
+            mqttClient.removeListener('message', handleMessage);
+            mqttClient.removeListener('connect', subscribeToSelection);
+        };
+    }, []);
 
     useEffect(() => {
       const userAgent = navigator.userAgent;
@@ -80,6 +112,9 @@ function App() {
                 <div className="App">
                     <div className="header">
                         <h1>HemmTree Lights App</h1>
+                        <p className="current-selection" role="status" aria-live="polite">
+                            Current lights: {currentSelection || 'Waiting for a selection'}
+                        </p>
                     </div>
 
 

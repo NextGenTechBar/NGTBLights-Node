@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 // import './styles/animations.scss'; // Make sure to create and style this CSS file
 import '../App.scss';
 import ModalAlert from './ModalAlert.js'
+import { publishCurrentSelection } from './currentSelection';
 
 const Animations = (props) => {
     const {client} = props.mqttClient;
@@ -66,6 +67,9 @@ const Animations = (props) => {
 	}
         console.log(colorToSend);
         client.publish('GUHemmTree', colorToSend, options);
+	if (options.retain) {
+	    publishCurrentSelection(client, labels[index]);
+	}
         client.publish('GUHemmTreeStats', colorToSend+"," + props.User.user);
 
         console.log('Message sent');
