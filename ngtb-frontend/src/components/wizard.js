@@ -22,6 +22,8 @@ const Wizard = (props) => {
     const [clickCount, setClickCount] = useState(0);
     const clickTimestamps = useRef([]);
     const [timer, setTimer] = useState(null);
+    const [secretCode, setSecretCode] = useState('');
+    const [secretCodeError, setSecretCodeError] = useState('');
     const [genieResponse, setGenieResponse] = useState(() => getSavedWizardTower()?.response || '');
     const [isRevealing, setIsRevealing] = useState(() => false);
     const [isGenerating, setIsGenerating] = useState(false);
@@ -115,9 +117,9 @@ const Wizard = (props) => {
         });
     };
 
-    //Deprecated click function for secret codes.
     const handleClick = (event, mode) => {
         event.preventDefault(); // Prevent the form from submitting and reloading the page
+        setSecretCodeError('');
 
         var colorToSend = '';
         switch (mode.toLowerCase()) {
@@ -188,11 +190,12 @@ const Wizard = (props) => {
 		colorToSend = 'OTHERevilmode'
 		break;
             default:
-                colorToSend = 'invalid';
-                document.getElementById('custom').value = '';
-                document.getElementById('custom').placeholder = 'Invalid code. Try again!';
+	        setSecretCode('');
+	        setSecretCodeError('Invalid code. Try again!');
+	        return;
         }
 
+        setSecretCode('');
         var options = { retain: true };
 
 	//Don't retain messages that are intended to be a one-time effect
@@ -519,22 +522,6 @@ const Wizard = (props) => {
         //<div className="static-colors-container">
         <div className="wizard-layout">
             <div className="wizard-container">
-
-                {/* Secret Commands Section */}
-            {/*<h2>Secret Commands!</h2>
-                <div style={{ backgroundColor: '#c1c6c8', borderRadius: '10px', padding: '7px', marginBottom: '0px' }}>
-                    
-                    <form onSubmit={(event) => ratelimit(event, document.getElementById('custom').value)}>
-                        <input type="text" id="custom" name="Custom" placeholder="Enter a secret code!" />
-                        <button type="submit" className='submit-button' style={{ display: 'block', marginTop: '10px' }}>
-                            Submit
-                        </button>
-                    </form>
-                </div>
-
-
-            <h2>-----</h2>*/}
-
             <h2 style={{ textAlign: 'center' }}><u>Speak with the HemmTree Wizard!</u></h2>
             <font color="white" style={{ textAlign: 'center' }}>
                 <b>Set the color of the lights using AI! (allow 15-30 seconds for theme to take effect)</b>
@@ -566,6 +553,31 @@ const Wizard = (props) => {
                     </form>
 
                 </div>
+                <details className="advanced-commands">
+                    <summary>Secret Commands!</summary>
+                    <form className="secret-command-form" onSubmit={(event) => ratelimit(event, secretCode)}>
+                        <label htmlFor="custom">Enter a command code</label>
+                        <input
+                            type="text"
+                            id="custom"
+                            name="Custom"
+                            placeholder="Enter a secret code!"
+                            value={secretCode}
+                            onChange={(event) => setSecretCode(event.target.value)}
+                            aria-invalid={Boolean(secretCodeError)}
+                            aria-describedby={secretCodeError ? 'secret-code-error' : undefined}
+                            required
+                        />
+                        {secretCodeError && (
+                            <p id="secret-code-error" className="secret-code-error" role="alert">
+                                {secretCodeError}
+                            </p>
+                        )}
+                        <button type="submit" className="submit-button">
+                            Submit
+                        </button>
+                    </form>
+                </details>
             </div>
 
             <div ref={wizardTowerRef} className="wizard-tower">
