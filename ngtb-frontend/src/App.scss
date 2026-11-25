@@ -496,6 +496,10 @@ button {
     overflow-wrap: anywhere; /* Ensure long words break to prevent overflow */
 }
 
+#GenieResponse {
+    overflow-anchor: none;
+}
+
 .wizard-tower-header {
     width: 100%;
     position: relative;

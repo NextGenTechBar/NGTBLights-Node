@@ -97,7 +97,19 @@ const Wizard = (props) => {
 
         scrollFrameRef.current = requestAnimationFrame(() => {
             if (autoFollowRef.current) {
-                responseEndRef.current?.scrollIntoView({ behavior: 'auto', block: 'end' });
+                const responseEnd = responseEndRef.current;
+                if (responseEnd) {
+                    const currentScrollY = window.scrollY;
+                    const responseBottom = responseEnd.getBoundingClientRect().bottom + currentScrollY;
+                    const desiredScrollY = Math.min(
+                        document.documentElement.scrollHeight - window.innerHeight,
+                        responseBottom - window.innerHeight + 24
+                    );
+
+                    if (desiredScrollY > currentScrollY) {
+                        window.scrollTo(0, desiredScrollY);
+                    }
+                }
             }
             scrollFrameRef.current = null;
         });
@@ -402,12 +414,21 @@ const Wizard = (props) => {
             sseBuffer += decoder.decode();
             consumeEventBuffer();
 
-            publishCurrentSelection(client, theme);
+            const beginsWithHidden = result.trimStart().startsWith('<hidden>');
+
+            if (beginsWithHidden) {
+                result = result.replace(/^\s*<hidden>/, '').trim();
+            } else {
+                publishCurrentSelection(client, theme);
+            }
+
             clearInterval(castingInterval);
             let visibleResponse = "";
             setGenieResponse("");
             setIsRevealing(true);
             await new Promise((resolve) => requestAnimationFrame(resolve));
+
+            
 
             for (const character of Array.from(result)) {
                 visibleResponse += character;
